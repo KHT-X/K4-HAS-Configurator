@@ -1,0 +1,1769 @@
+<html lang="en"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>K4 Smart Home</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0c0e13;--s1:#12151d;--s2:#181c26;--s3:#1e2330;--s4:#252a3a;
+  --b1:#1e2230;--b2:#272d40;--b3:#333c55;
+  --t1:#dde1ee;--t2:#7e89a8;--t3:#3f4a68;
+  --ac:#4f7fff;--ac2:#2952cc;--ag:rgba(79,127,255,.12);
+  --go:#f0b429;--gg:rgba(240,180,41,.12);
+  --gr:#34d399;--rg:rgba(52,211,153,.1);
+  --te:#22d3ee;--tg:rgba(34,211,238,.11);
+  --pu:#a78bfa;--pg:rgba(167,139,250,.11);
+  --or:#fb923c;--og:rgba(251,146,60,.11);
+  --rd:#f87171;
+  --r1:6px;--r2:10px;--r3:14px;--r4:18px
+}
+html,body{height:100%;font-family:-apple-system,'Helvetica Neue',sans-serif;background:var(--bg);color:var(--t1);overflow:hidden}
+svg{display:inline-block;vertical-align:middle;flex-shrink:0}
+
+/* ── Layout ── */
+.shell{display:flex;height:100vh;overflow:hidden;}
+.rail{width:52px;background:var(--s1);border-right:1px solid var(--b1);display:flex;flex-direction:column;align-items:center;padding:10px 0;gap:2px;flex-shrink:0}
+.rail-logo{width:32px;height:32px;background:var(--ac);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff;margin-bottom:8px;cursor:pointer;letter-spacing:-.5px}
+.ri{width:36px;height:36px;border-radius:7px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--t3);border:none;background:transparent;transition:all .13s}
+.ri:hover{background:var(--s2);color:var(--t2)}
+.ri.on{background:var(--ag);color:var(--ac)}
+.rsep{width:22px;height:1px;background:var(--b1);margin:4px 0}
+
+/* ── Nav ── */
+.nav{width:188px;background:var(--s1);border-right:1px solid var(--b1);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0}
+.nav-head{padding:10px 11px 8px;border-bottom:1px solid var(--b1)}
+.nav-proj{font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:4px;margin-bottom:1px}
+.nav-proj:hover .pe{opacity:1}
+.nav-meta{font-size:9px;color:var(--t3);cursor:pointer}
+.pe{font-size:10px;color:var(--t3);opacity:0;transition:opacity .12s}
+.nav-srch{margin:6px 7px 3px;position:relative}
+.nav-srch input{width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:var(--r1);padding:5px 7px 5px 23px;font-size:11px;color:var(--t1);font-family:inherit;outline:none}
+.nav-srch input:focus{border-color:var(--ac)}
+.nav-srch input::placeholder{color:var(--t3)}
+.nav-srch svg{position:absolute;left:6px;top:50%;transform:translateY(-50%)}
+.nav-scroll{flex:1;overflow-y:auto;padding-bottom:6px}
+.nav-scroll::-webkit-scrollbar{width:2px}
+.nav-scroll::-webkit-scrollbar-thumb{background:var(--b2)}
+.nfl{display:flex;align-items:center;gap:4px;padding:8px 9px 3px;font-size:9px;color:var(--t3);letter-spacing:.07em;text-transform:uppercase;cursor:pointer;user-select:none}
+.nfl .ci{transition:transform .15s;margin-left:auto}
+.nfl.cl .ci{transform:rotate(-90deg)}
+.nfl .fed{font-size:10px;opacity:0;background:none;border:none;cursor:pointer;color:var(--t3);padding:0 2px}
+.nfl:hover .fed{opacity:1}
+.nfl .fed:hover{color:var(--ac)}
+.nfb{font-size:9px;background:var(--s3);padding:1px 5px;border-radius:6px;color:var(--t3)}
+.nrm{display:flex;align-items:center;gap:6px;padding:5px 7px;margin:0 3px;border-radius:var(--r1);cursor:pointer;color:var(--t2);font-size:11px;transition:all .11s;position:relative}
+.nrm:hover{background:var(--s2);color:var(--t1)}
+.nrm:hover .reb{opacity:1}
+.nrm.on2{background:var(--ag);color:var(--ac)}
+.nrm .rib{margin-left:auto;font-size:9px;padding:1px 5px;border-radius:5px}
+.ron{background:var(--rg);color:var(--gr)}
+.roff{background:var(--s3);color:var(--t3)}
+.reb{position:absolute;right:26px;opacity:0;border:none;background:none;cursor:pointer;color:var(--t3);font-size:10px;transition:opacity .12s}
+.reb:hover{color:var(--ac)}
+.add-rm{display:flex;align-items:center;gap:5px;padding:5px 9px;margin:2px 3px;border-radius:var(--r1);cursor:pointer;color:var(--t3);font-size:10px;border:1px dashed var(--b2);background:transparent;width:calc(100% - 6px);transition:all .12s}
+.add-rm:hover{border-color:var(--te);color:var(--te)}
+.nav-foot{padding:7px;border-top:1px solid var(--b1);flex-shrink:0}
+.nst{display:flex;align-items:center;gap:5px;font-size:9px;color:var(--t3)}
+.ndot{width:5px;height:5px;border-radius:50%;background:var(--gr)}
+
+/* ── Main ── */
+.main{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden;min-height:0;}
+.topbar{height:44px;background:var(--s1);border-bottom:1px solid var(--b1);display:flex;align-items:center;padding:0 12px;gap:8px;flex-shrink:0}
+.tb-cr{font-size:11px;color:var(--t3)}
+.tb-cr span{color:var(--t2)}
+.tb-r{margin-left:auto;display:flex;align-items:center;gap:5px}
+.btn{padding:4px 10px;border-radius:var(--r1);border:1px solid var(--b2);background:transparent;color:var(--t2);font-size:10px;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:3px;transition:all .12s;white-space:nowrap}
+.btn:hover{background:var(--s2);color:var(--t1)}
+.btn-ac{background:var(--ac);border-color:var(--ac);color:#fff}
+.btn-ac:hover{background:var(--ac2)}
+.btn-go{background:var(--go);border-color:var(--go);color:#0c0e13;font-weight:600}
+.btn-go:hover{opacity:.9}
+.btn-te{background:var(--te);border-color:var(--te);color:#0c0e13;font-weight:600}
+.btn-te:hover{opacity:.9}
+.btn-im{color:var(--te);border-color:var(--tg)}
+.btn-ex{color:var(--gr);border-color:var(--rg)}
+
+/* ── Workspace ── */
+.workspace{flex:1;display:flex;overflow:hidden;min-height:0;}
+
+/* ── Floor plan ── */
+.fpwrap{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0;}
+.ftabs{display:flex;background:var(--s1);border-bottom:1px solid var(--b1);overflow-x:auto;flex-shrink:0}
+.ftabs::-webkit-scrollbar{height:2px}
+.ftab{padding:7px 13px;font-size:10px;color:var(--t3);cursor:pointer;border-bottom:2px solid transparent;display:flex;align-items:center;gap:4px;white-space:nowrap;transition:all .12s}
+.ftab:hover{color:var(--t2)}
+.ftab.on3{color:var(--ac);border-bottom-color:var(--ac);background:var(--ag)}
+.ftab:hover .fte{opacity:1}
+.fte{font-size:10px;opacity:0;color:var(--t3);transition:opacity .12s}
+.fbc{font-size:9px;background:var(--s3);padding:1px 5px;border-radius:5px;margin-left:2px}
+.ftab.on3 .fbc{background:var(--ac2);color:#fff}
+.add-fl{padding:7px 11px;font-size:10px;color:var(--t3);cursor:pointer;display:flex;align-items:center;gap:3px;border-left:1px solid var(--b1);transition:color .12s;white-space:nowrap}
+.add-fl:hover{color:var(--te)}
+
+.fp-canvas{flex:1;overflow:auto;position:relative;min-height:0;
+  background-color:var(--bg);
+  background-image:linear-gradient(var(--b1) 1px,transparent 1px),linear-gradient(90deg,var(--b1) 1px,transparent 1px);
+  background-size:30px 30px;}
+.fp-canvas::-webkit-scrollbar{width:6px;height:6px}
+.fp-canvas::-webkit-scrollbar-thumb{background:var(--b2);border-radius:3px}
+.fp-grid{position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(var(--b1) 1px,transparent 1px),linear-gradient(90deg,var(--b1) 1px,transparent 1px);background-size:30px 30px;opacity:.2;z-index:0}
+.fp-inner{position:relative;display:inline-block;padding:20px;}
+
+/* ── Room nodes ── */
+.rn{position:absolute;border-radius:8px;border:1px solid var(--b2);background:var(--s2);cursor:pointer;display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;overflow:hidden;transition:border-color .15s,background .15s;padding:6px 7px;gap:0}
+.rn:hover{background:var(--s3)}
+.rn.sel{border-color:var(--ac);background:rgba(79,127,255,.07)}
+.rn.lit{border-color:rgba(240,180,41,.3)}
+.rn.sel.lit{border-color:var(--ac)}
+.rn-glow{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .3s;background:radial-gradient(circle at 50% 35%,rgba(240,180,41,.14) 0%,transparent 70%)}
+.rn.lit .rn-glow{opacity:1}
+.rn-ic{font-size:14px;position:relative;z-index:1;color:var(--t3)}
+.rn.lit .rn-ic{color:var(--go)}
+.rn.sel .rn-ic{color:var(--ac)}
+.rn-lb{font-size:8px;color:var(--t3);text-align:center;line-height:1.2;padding:0 3px;position:relative;z-index:1;max-width:100%}
+.rn.lit .rn-lb{color:var(--t2)}
+.rn.sel .rn-lb{color:var(--ac)}
+.rn-dots{display:flex;flex-wrap:wrap;gap:2px;justify-content:center;position:relative;z-index:1;padding:0 2px;max-width:100%}
+.rn-dot{width:5px;height:5px;border-radius:50%;opacity:.25}
+.rn.lit .rn-dot{opacity:1}
+.rn-pct{font-size:7px;color:var(--t3);position:relative;z-index:1}
+.rn.lit .rn-pct{color:var(--gr)}
+.dot-sp{background:var(--go)}
+.dot-co,.dot-le,.dot-jo,.dot-mi,.dot-va,.dot-un{background:var(--te)}
+.dot-pe,.dot-fl{background:var(--pu)}
+.dot-tr{background:var(--or)}
+.dot-wa,.dot-ou{background:var(--gr)}
+
+/* ── Canvas overlay ── */
+.fp-ov{position:sticky;bottom:10px;left:12px;display:inline-flex;gap:8px;background:var(--s1);border:1px solid var(--b1);border-radius:var(--r1);padding:4px 9px;font-size:9px;color:var(--t3);pointer-events:none}
+.fp-ov span{color:var(--t2);font-weight:500}
+.fp-fbtns{position:sticky;top:10px;float:right;margin-right:10px;display:flex;gap:4px}
+
+/* ── Global views ── */
+.gview{flex:1;overflow-y:auto;padding:14px}
+.gview::-webkit-scrollbar{width:4px}
+.gview::-webkit-scrollbar-thumb{background:var(--b2);border-radius:2px}
+.gs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:7px}
+.gs-tile{background:var(--s2);border:1px solid var(--b1);border-radius:var(--r2);padding:12px 8px;cursor:pointer;text-align:center;position:relative;transition:all .13s}
+.gs-tile:hover{background:var(--s3)}
+.gs-tile.asc{border-color:var(--ac);background:var(--ag)}
+.gs-tile.cst{border-color:var(--tg)}
+.gs-tile.cst.asc{border-color:var(--te);background:var(--tg)}
+.gs-ic{font-size:20px;margin-bottom:5px;color:var(--t3)}
+.gs-tile.asc .gs-ic{color:var(--ac)}
+.gs-tile.cst .gs-ic{color:var(--te)}
+.gs-nm{font-size:9px;font-weight:500;color:var(--t2)}
+.gs-lb{font-size:8px;color:var(--t3);margin-top:1px}
+.gs-acts{position:absolute;top:4px;right:4px;display:none;gap:2px}
+.gs-tile:hover .gs-acts{display:flex}
+.ga{font-size:11px;color:var(--t3);border:none;background:none;cursor:pointer}
+.ga:hover{color:var(--ac)}
+.ga.del:hover{color:var(--rd)}
+.add-tile{border:1px dashed var(--b2);border-radius:var(--r2);padding:12px 8px;cursor:pointer;text-align:center;color:var(--t3);font-size:9px;display:flex;flex-direction:column;align-items:center;gap:4px}
+.add-tile:hover{border-color:var(--te);color:var(--te)}
+
+/* ── Right panel ── */
+.rp{width:300px;background:var(--s1);border-left:1px solid var(--b1);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0}
+.rp-head{padding:10px;border-bottom:1px solid var(--b1);display:flex;align-items:center;gap:7px;flex-shrink:0}
+.rp-ico{width:30px;height:30px;border-radius:7px;background:var(--s3);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;color:var(--t3)}
+.rp-ico.lit{background:var(--gg);color:var(--go)}
+.rp-ti{font-size:12px;font-weight:600;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rp-su{font-size:9px;color:var(--t3);margin-top:1px}
+.tog{width:36px;height:20px;border-radius:10px;background:var(--s3);border:none;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0}
+.tog.on{background:var(--ac)}
+.tog::after{content:'';position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:#fff;transition:transform .18s}
+.tog.on::after{transform:translateX(16px)}
+.rp-tabs{display:flex;border-bottom:1px solid var(--b1);flex-shrink:0}
+.rp-tab{flex:1;padding:7px 2px;text-align:center;font-size:9px;color:var(--t3);cursor:pointer;border-bottom:2px solid transparent;transition:all .12s}
+.rp-tab.on{color:var(--ac);border-bottom-color:var(--ac)}
+.rp-body{flex:1;overflow-y:auto;padding:8px}
+.rp-body::-webkit-scrollbar{width:2px}
+.rp-body::-webkit-scrollbar-thumb{background:var(--b2)}
+.rp-sec{font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;padding:7px 0 4px;display:flex;align-items:center;gap:4px}
+.rp-sec:first-child{padding-top:0}
+.rp-sec .sb{margin-left:auto;font-size:9px;color:var(--te);background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:2px}
+
+/* ── Circuit blocks ── */
+.cb{background:var(--s2);border:1px solid var(--b1);border-radius:8px;padding:8px;margin-bottom:5px}
+.cb.off{opacity:.5}
+.cb-h{display:flex;align-items:center;gap:6px;margin-bottom:7px}
+.cb-ic{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.ic-sp,.ic-ch{background:var(--gg);color:var(--go)}
+.ic-co,.ic-le,.ic-un,.ic-jo,.ic-mi,.ic-va,.ic-st{background:var(--tg);color:var(--te)}
+.ic-pe,.ic-fl{background:var(--pg);color:var(--pu)}
+.ic-tr{background:var(--og);color:var(--or)}
+.ic-wa,.ic-ou,.ic-bo,.ic-up,.ic-po{background:var(--rg);color:var(--gr)}
+.ic-cu{background:var(--s3);color:var(--t2)}
+.ic-ac{background:var(--ag);color:var(--ac)}
+.ic-he{background:rgba(248,113,113,.1);color:var(--rd)}
+.ic-ex,.ic-sv{background:var(--s3);color:var(--t3)}
+.cb-nm{font-size:10px;font-weight:500;flex:1}
+.cb-tl{font-size:8px;color:var(--t3)}
+.cb-vl{font-size:11px;font-weight:700;color:var(--gr);min-width:26px;text-align:right}
+.cb-vl.off{color:var(--t3)}
+.cb-tg{font-size:8px;padding:1px 5px;border-radius:6px}
+.tg-ms{background:var(--rg);color:var(--gr)}
+.tg-kp{background:var(--pg);color:var(--pu)}
+.tg-td{background:var(--tg);color:var(--te)}
+.tg-le{background:var(--gg);color:var(--go)}
+.tg-ma{background:var(--s3);color:var(--t3)}
+.csl{width:100%;-webkit-appearance:none;appearance:none;height:3px;border-radius:2px;outline:none;cursor:pointer;background:var(--s4)}
+.csl::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;border-radius:50%;cursor:pointer;border:2px solid var(--s1)}
+.csl:disabled{opacity:.2;cursor:not-allowed}
+.sl-sp::-webkit-slider-thumb{background:var(--go)}
+.sl-co::-webkit-slider-thumb,.sl-le::-webkit-slider-thumb,.sl-jo::-webkit-slider-thumb,.sl-mi::-webkit-slider-thumb,.sl-va::-webkit-slider-thumb{background:var(--te)}
+.sl-pe::-webkit-slider-thumb,.sl-fl::-webkit-slider-thumb{background:var(--pu)}
+.sl-tr::-webkit-slider-thumb{background:var(--or)}
+.sl-wa::-webkit-slider-thumb,.sl-ou::-webkit-slider-thumb{background:var(--gr)}
+
+/* ── Curtain / AC ── */
+.ctrl{display:flex;align-items:center;gap:6px;background:var(--s2);border:1px solid var(--b1);border-radius:8px;padding:8px;margin-bottom:5px;flex-wrap:wrap}
+.ctrl-lb{font-size:10px;font-weight:500;flex:1}
+.ctrl-v{font-size:11px;font-weight:700;color:var(--ac);min-width:32px;text-align:center}
+.curt{display:flex;gap:3px}
+.cbt{flex:1;padding:4px 3px;border-radius:5px;border:1px solid var(--b2);background:var(--s3);color:var(--t3);font-size:9px;cursor:pointer;text-align:center;transition:all .11s}
+.cbt.on{background:var(--ag);border-color:var(--ac);color:var(--ac)}
+.step{width:20px;height:20px;border-radius:5px;border:1px solid var(--b2);background:var(--s3);color:var(--t2);font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1}
+.chips{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:3px}
+.chip{padding:3px 8px;border-radius:11px;border:1px solid var(--b2);background:var(--s2);color:var(--t2);font-size:9px;cursor:pointer;transition:all .11s}
+.chip:hover{background:var(--s3)}
+
+/* ── Scene tiles in right panel ── */
+.sl{display:flex;flex-direction:column;gap:3px}
+.st{background:var(--s2);border:1px solid var(--b1);border-radius:8px;padding:6px 8px;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .12s}
+.st:hover{background:var(--s3)}
+.st.on{border-color:var(--ac);background:var(--ag)}
+.st.cst{border-color:var(--tg)}
+.st.cst.on{border-color:var(--te);background:var(--tg)}
+.st-ic{width:24px;height:24px;border-radius:6px;background:var(--s3);display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--t3);flex-shrink:0}
+.st.on .st-ic{background:var(--ag);color:var(--ac)}
+.st.cst .st-ic{background:var(--tg);color:var(--te)}
+.st-nm{font-size:10px;font-weight:600}
+.st.on .st-nm{color:var(--ac)}
+.st.cst.on .st-nm{color:var(--te)}
+.st-ds{font-size:9px;color:var(--t3)}
+.st-acts{display:flex;gap:2px;margin-left:auto}
+.sa{font-size:11px;color:var(--t3);border:none;background:none;cursor:pointer;opacity:0;transition:opacity .12s}
+.st:hover .sa{opacity:1}
+.sa:hover{color:var(--ac)}
+.sa.del:hover{color:var(--rd)}
+
+/* ── Auto rows ── */
+.ar{background:var(--s2);border:1px solid var(--b1);border-radius:8px;padding:8px;margin-bottom:5px}
+.ar-h{display:flex;align-items:center;gap:6px;margin-bottom:7px}
+.ar-ti{font-size:10px;font-weight:500;flex:1}
+.ad{font-size:11px;color:var(--t3);border:none;background:none;cursor:pointer}
+.ad:hover{color:var(--rd)}
+.af{display:flex;align-items:center;gap:5px;margin-bottom:4px}
+.al{font-size:9px;color:var(--t3);width:30px;flex-shrink:0}
+.ai,.as{flex:1;background:var(--s3);border:1px solid var(--b2);border-radius:5px;padding:4px 6px;font-size:10px;color:var(--t1);font-family:inherit;outline:none}
+.ai:focus,.as:focus{border-color:var(--ac)}
+.adays{display:flex;gap:2px}
+.aday{width:22px;height:18px;border-radius:4px;border:1px solid var(--b2);background:var(--s3);color:var(--t3);font-size:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .11s}
+.aday.on{background:var(--ag);border-color:var(--ac);color:var(--ac)}
+.sht{width:26px;height:14px;border-radius:7px;border:none;cursor:pointer;position:relative;flex-shrink:0}
+.sht::after{content:'';position:absolute;top:2px;left:2px;width:10px;height:10px;border-radius:50%;background:#fff;transition:transform .16s}
+.sht.on{background:var(--ac)}
+.sht.on::after{transform:translateX(12px)}
+.sht.off{background:var(--s3)}
+.add-row{border:1px dashed var(--b2);border-radius:8px;padding:7px;display:flex;align-items:center;justify-content:center;gap:4px;cursor:pointer;color:var(--t3);font-size:10px;transition:all .12s}
+.add-row:hover{border-color:var(--ac);color:var(--ac)}
+
+/* ── Status bar ── */
+.sbar{height:22px;background:var(--s1);border-top:1px solid var(--b1);display:flex;align-items:center;padding:0 10px;gap:10px;font-size:9px;color:var(--t3);flex-shrink:0}
+.sbi{display:flex;align-items:center;gap:3px}
+
+/* ── Modals ── */
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.8);display:none;align-items:center;justify-content:center;z-index:200}
+.mo.open{display:flex}
+.md{background:var(--s1);border:1px solid var(--b2);border-radius:var(--r4);display:flex;flex-direction:column;overflow:hidden;max-height:88vh}
+.md.sm{width:420px} .md.md2{width:540px} .md.lg{width:640px}
+.mh{padding:13px 17px;border-bottom:1px solid var(--b1);display:flex;align-items:center;gap:9px;flex-shrink:0}
+.mh-ic{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px}
+.mh-ti{font-size:13px;font-weight:600;flex:1}
+.mh-su{font-size:9px;color:var(--t3);margin-top:1px}
+.mhc{width:24px;height:24px;border-radius:5px;border:1px solid var(--b2);background:transparent;color:var(--t2);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.mhc:hover{background:var(--s2)}
+.mb{flex:1;overflow-y:auto;padding:14px 17px}
+.mb::-webkit-scrollbar{width:3px}
+.mb::-webkit-scrollbar-thumb{background:var(--b2)}
+.mft{padding:10px 17px;border-top:1px solid var(--b1);display:flex;gap:7px;justify-content:flex-end;flex-shrink:0}
+.fi{margin-bottom:9px}
+.fi label{display:block;font-size:9px;color:var(--t2);margin-bottom:3px;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+.fi input,.fi select,.fi textarea{width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:var(--r1);padding:6px 9px;font-size:11px;color:var(--t1);font-family:inherit;outline:none}
+.fi input:focus,.fi select:focus,.fi textarea:focus{border-color:var(--ac)}
+.fi textarea{resize:vertical;min-height:46px}
+.fi-row{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.ip{display:flex;flex-wrap:wrap;gap:3px;margin-top:4px}
+.io{width:28px;height:28px;border-radius:6px;border:1px solid var(--b2);background:var(--s3);color:var(--t3);font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .11s}
+.io:hover{background:var(--s4)}
+.io.on{background:var(--tg);border-color:var(--te);color:var(--te)}
+.mc-row{display:flex;align-items:center;gap:7px;background:var(--s2);border:1px solid var(--b1);border-radius:8px;padding:7px 9px;margin-bottom:5px;flex-wrap:wrap}
+.mc-lb{font-size:10px;font-weight:500;flex:1}
+.mc-btns{display:flex;gap:3px}
+.mc-b{padding:4px 7px;border-radius:5px;border:1px solid var(--b2);background:var(--s3);color:var(--t3);font-size:9px;cursor:pointer;white-space:nowrap;transition:all .11s}
+.mc-b.on{background:var(--ag);border-color:var(--ac);color:var(--ac)}
+.mc-tv{font-size:12px;font-weight:700;color:var(--ac);min-width:38px;text-align:center}
+.lcs{margin-bottom:9px}
+.lch{display:flex;align-items:center;gap:5px;font-size:9px;font-weight:600;color:var(--t2);padding:5px 0 4px;border-bottom:1px solid var(--b1);margin-bottom:4px}
+.lat{margin-left:auto;font-size:8px;color:var(--t3)}
+.lcr{display:flex;align-items:center;gap:5px;padding:4px 0;border-bottom:.5px solid var(--b1)}
+.lcr:last-child{border-bottom:none}
+.lck{width:13px;height:13px;border-radius:3px;border:1px solid var(--b2);background:var(--s3);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.lck.on{background:var(--ac);border-color:var(--ac)}
+.lck svg{display:none}
+.lck.on svg{display:block}
+.lcn{font-size:9px;flex:1;color:var(--t2)}
+.lcp{display:flex;align-items:center;gap:2px}
+.lcp input{width:42px;background:var(--s3);border:1px solid var(--b2);border-radius:4px;padding:2px 4px;font-size:9px;color:var(--t1);font-family:inherit;outline:none;text-align:center}
+.lcp.dim{opacity:.22;pointer-events:none}
+.cr-row{display:flex;align-items:center;gap:5px;padding:4px 0;border-bottom:.5px solid var(--b1)}
+.cr-row:last-child{border-bottom:none}
+.cr-row input,.cr-row select{background:var(--s3);border:1px solid var(--b2);border-radius:5px;padding:4px 6px;font-size:10px;color:var(--t1);font-family:inherit;outline:none}
+
+/* ── Import panel ── */
+.imp-panel{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:300}
+.imp-panel.open{display:flex}
+.imp-box{background:var(--s1);border:1px solid var(--b2);border-radius:var(--r4);width:620px;max-height:88vh;display:flex;flex-direction:column;overflow:hidden}
+.dz{border:2px dashed var(--b2);border-radius:var(--r3);padding:28px 20px;text-align:center;cursor:pointer;position:relative;transition:all .18s}
+.dz:hover,.dz.over{border-color:var(--ac);background:var(--ag)}
+.dz input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.dz-ic{font-size:32px;color:var(--t3);margin-bottom:8px}
+.dz-ti{font-size:12px;font-weight:500;margin-bottom:3px}
+.dz-su{font-size:10px;color:var(--t3)}
+.dz-ty{display:flex;gap:5px;justify-content:center;margin-top:9px;flex-wrap:wrap}
+.dz-t{font-size:8px;padding:2px 7px;border-radius:7px;border:1px solid var(--b2);color:var(--t3);background:var(--s2)}
+.fl-list{margin-top:12px;display:flex;flex-direction:column;gap:5px}
+.fli{background:var(--s2);border:1px solid var(--b1);border-radius:9px;padding:9px 11px;display:flex;align-items:center;gap:9px}
+.fli-nm{font-size:11px;font-weight:500;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fli-sz{font-size:9px;color:var(--t3)}
+.fli-st{font-size:9px;padding:1px 7px;border-radius:7px}
+.st-rd{background:var(--rg);color:var(--gr)}
+.st-ps{background:var(--ag);color:var(--ac)}
+.st-dn{background:var(--tg);color:var(--te)}
+.st-er{background:rgba(248,113,113,.12);color:var(--rd)}
+.fli-del{font-size:13px;color:var(--t3);cursor:pointer;border:none;background:none}
+.fli-del:hover{color:var(--rd)}
+.pp{background:var(--s2);border:1px solid var(--b1);border-radius:9px;padding:11px 13px;margin-top:10px;display:none}
+.pp.show{display:block}
+.pp-lb{font-size:10px;color:var(--t2);margin-bottom:5px}
+.pp-bar{height:4px;background:var(--b2);border-radius:2px;overflow:hidden}
+.pp-fill{height:100%;background:linear-gradient(90deg,var(--ac),var(--te));border-radius:2px;transition:width .35s}
+.pp-st{font-size:9px;color:var(--t3);margin-top:3px}
+.pr{background:var(--s2);border:1px solid var(--te);border-radius:var(--r2);padding:12px;margin-top:12px;display:none}
+.pr.show{display:block}
+.pr-ti{font-size:10px;font-weight:600;color:var(--te);margin-bottom:9px;display:flex;align-items:center;gap:5px}
+.pr-s{margin-bottom:8px}
+.pr-sl{font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.pr-chips{display:flex;flex-wrap:wrap;gap:4px}
+.pr-chip{display:flex;align-items:center;gap:4px;font-size:9px;padding:2px 7px;border-radius:7px;background:var(--s3);border:1px solid var(--b2);color:var(--t2)}
+.pr-chip input[type=checkbox]{width:11px;height:11px;accent-color:var(--ac);cursor:pointer}
+.pr-sc{font-size:9px;padding:2px 7px;border-radius:7px;background:var(--ag);color:var(--ac);border:1px solid var(--ac)}
+.pr-raw{background:var(--s3);border:1px solid var(--b1);border-radius:7px;padding:8px;margin-top:7px;font-size:8px;color:var(--t3);max-height:100px;overflow-y:auto;font-family:monospace;white-space:pre-wrap}
+
+/* ── Toast ── */
+.toast{position:fixed;top:50px;right:10px;background:var(--s2);border:1px solid var(--b2);border-radius:9px;padding:8px 11px;font-size:10px;color:var(--t1);opacity:0;pointer-events:none;z-index:999;max-width:210px;transition:opacity .2s}
+.toast.show{opacity:1}
+.toast-ti{font-weight:600;margin-bottom:1px}
+.toast-bd{color:var(--t2)}
+.emp{display:flex;flex-direction:column;align-items:center;justify-content:center;height:150px;color:var(--t3);text-align:center;gap:5px}
+.emp svg{opacity:.5}
+.emp div{font-size:10px}
+
+/* ── Room node detail layout ── */
+.rn{justify-content:flex-start;padding:6px 7px;gap:0;}
+.rn-top{display:flex;align-items:center;gap:5px;width:100%;margin-bottom:5px;flex-shrink:0;border-bottom:1px solid var(--b1);padding-bottom:4px;}
+.rn-ic{font-size:13px;flex-shrink:0;}
+.rn-lb{font-size:8px;font-weight:600;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--t3);}
+.rn.lit .rn-lb{color:var(--t2);}
+.rn.sel .rn-lb{color:var(--ac);}
+.rn-pct{font-size:8px;font-weight:700;color:var(--t3);flex-shrink:0;}
+.rn.lit .rn-pct{color:var(--gr);}
+.rn-crcs{display:flex;flex-direction:column;gap:2px;width:100%;}
+.rn-crc{display:flex;align-items:center;gap:4px;width:100%;}
+.rn-crc-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
+.rn-crc-nm{font-size:7px;color:var(--t3);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.rn.lit .rn-crc-nm{color:var(--t2);}
+.rn-crc-vl{font-size:7px;font-weight:600;color:var(--t3);flex-shrink:0;min-width:20px;text-align:right;}
+.rn.lit .rn-crc-vl{color:var(--gr);}
+.rn-extras{display:flex;gap:4px;flex-wrap:wrap;margin-top:3px;width:100%;}
+.rn-extra{font-size:7px;color:var(--t3);background:var(--s3);padding:1px 4px;border-radius:4px;}
+.rn.lit .rn-extra{color:var(--t2);}
+/* Remove old dot classes that conflict */
+.rn-dots,.rn-dot{display:none;}
+</style>
+</head>
+<body>
+<div class="shell">
+ <!-- Rail -->
+ <div class="rail">
+  <div class="rail-logo" onclick="oM('pjMo')" title="Project settings">K4</div>
+  <button class="ri on" id="r0" onclick="vw('fp')" title="Floor plan">▦</button>
+  <button class="ri" id="r1" onclick="vw('sc')" title="Scenes">✦</button>
+  <button class="ri" id="r2" onclick="vw('sh')" title="Schedules">◌</button>
+  <div class="rsep"></div>
+  <button class="ri" onclick="oM('pjMo')" title="Settings">⚙</button>
+  <button class="ri" onclick="openImport()" title="Import drawings" style="color:var(--te)">↑</button>
+  <button class="ri" onclick="exportHTML()" title="Export" style="color:var(--gr);margin-top:auto">↓</button>
+ </div>
+ <!-- Nav -->
+ <div class="nav">
+  <div class="nav-head">
+   <div class="nav-proj" onclick="oM('pjMo')"><span id="pjNm">Villa 08 · Cluster 28</span><span class="pe">✎</span></div>
+   <div class="nav-meta" id="pjMt" onclick="oM('pjMo')">Jumeirah Islands, Dubai · SD_5036 V7.0</div>
+  </div>
+  <div class="nav-srch"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg><input type="text" placeholder="Search rooms…" oninput="filterNav(this.value)"></div>
+  <div class="nav-scroll" id="navScroll"><div class="nfl" onclick="tgNF('nfl_gf',this)">
+   <span>🏠</span>Ground floor<span class="nfb">14/14</span>
+   <button class="fed" onclick="event.stopPropagation();oFlEdit('gf')">✎</button>
+   <span class="ci">▼</span>
+  </div>
+  <div id="nfl_gf">
+   <div class="nrm " id="nav_bar" onclick="clkRm('bar')">
+    <span>🍻</span>Bar Area
+    <button class="reb" onclick="event.stopPropagation();oRmEdit('bar')">✎</button>
+    <span class="rib ron">on</span>
+   </div><div class="nrm " id="nav_living" onclick="clkRm('living')">
+    <span>🋲</span>Living Area
+    <button class="reb" onclick="event.stopPropagation();oRmEdit('living')">✎</button>
+    <span class="rib ron">on</span>
+   </div><div class="nrm " id="nav_dining" onclick="clkRm('dining')">
+    <span>🍳</span>Dining Room
+    <button class="reb" onclick="event.stopPropagation();oRmEdit('dining')">✎</button>
+    <span class="rib ron">on</span>
+   </div><div class="nrm " id="nav_showkit" onclick="clkRm('showkit')">
+    <span>🍳</span>Show Kitchen
+    <button class="reb" onclick="event.stopPropagation();oRmEdit('showkit')">✎</button>
+    <span class="rib ron">on</span>
+   </div><div class="nrm " id="nav_majlis" onclick="clkRm('majlis')">
+    <span>🋲</span>Majlis
+    <button class="reb" onclick="event.stopPropagation();oRmEdit('majlis')">✎</button>
+    <span class="rib ron">on</span>
+   </div><div class="nrm " id="nav_hallway" onclick="clkRm('hallway')">
+    <span>🗽</span>Hall Way
+    <button class="reb" onclick="event.stopPropagation();oRmEdit('hallway')">✎</button>
+    <span class="rib ron">on</span>
+   </div><div class="nrm " id="nav_kitchen" onclick="clkRm('kitchen')">
+    <span>🍳</span>Kitchen
+    <button class="reb" onclick="event.stopPropagation();oRmEdit('kitchen')">✎</button>
+    <span class="rib ron">on</span>
+   </div><div class="nrm " id="nav_foyer" onclick="clkRm('foyer')">
+    <span>🚪</span>Foyer
+    <button class="reb" onclick="event.stopPropagation();oRmEdit('foyer')">✎</button>
+    <span class="rib ron">on</span>
+   </div><div class="nrm " id="nav_powder" onclick="clkRm('powder')">
+    <span>💧</span>Powder Room
+    <button class="reb" onclick="event.stopPropagation();oRmEdit('powder')">✎</button>
+    <span class="rib ron">on</span>
+   </div><div class="nrm " id="nav_gbath" onclick="clkRm('gbath')">
+    <span>💧</span>Guest Bathroom
+    <button class="reb" onclick="event.stopPropagation();oRmEdit('gbath')">✎</button>
+    <span class="rib ron">on</span>
+   </div><div class="nrm " id="nav_corr_g" onclick="clkRm('corr_g')">
+    <span>🗽</span>Corridor
+    <button class="reb" onclick="event.stopPropagation();oRmEdit('corr_g')">✎</button>
+    <span class="rib ron">on</span>
+   </div><div class="nrm " id="nav_office" onclick="clkRm('office')">
+    <span>💼</span>Office
+    <button class="reb" onclick="event.stopPropagation();oRmEdit('office')">✎</button>
+    <span class="rib ron">on</span>
+   </div><div class="nrm " id="nav_gbed" onclick="clkRm('gbed')">
+    <span>🏠</span>Guest Bedroom
+    <button class="reb" onclick="event.stopPropagation();oRmEdit('gbed')">✎</button>
+    <span class="rib ron">on</span>
+   </div><div class="nrm " id="nav_corr_b" onclick="clkRm('corr_b')">
+    <span>🗽</span>Ground Corridor
+    <button class="reb" onclick="event.stopPropagation();oRmEdit('corr_b')">✎</button>
+    <span class="rib ron">on</span>
+   </div>
+   <button class="add-rm" onclick="addRoom('gf')">+ Add room</button>
+  </div><div class="nfl" onclick="tgNF('nfl_ff',this)">
+   <span>🏗</span>First floor<span class="nfb">12/12</span>
+   <button class="fed" onclick="event.stopPropagation();oFlEdit('ff')">✎</button>
+   <span class="ci">▼</span>
+  </div>
+  <div id="nfl_ff">
+   <div class="nrm " id="nav_corr_f" onclick="clkRm('corr_f')">
+    <span>🗽</span>First Corridor
+    <button class="reb" onclick="event.stopPropagation();oRmEdit('corr_f')">✎</button>
+    <span class="rib ron">on</span>
+   </div><div class="nrm " id="nav_bed2" onclick="clkRm('bed2')">
+    <span>🏠</span>Bedroom 02
+    <button class="reb" onclick="event.stopPropagation();oRmEdit('bed2')">✎</button>
+    <span class="rib ron">on</span>
+   </div><div class="nrm " id="nav_bath2" onclick="clkRm('bath2')">
+    <span>💧</span>Bathroom 02
+    <button class="reb" onclick="event.stopPropagation();oRmEdit('bath2')">✎</button>
+    <span class="rib ron">on</span>
+   </div><div class="nrm " id="nav_bed1" onclick="clkRm('bed1')">
+    <span>🏠</span>Bedroom 01
+    <button class="reb" onclick="event.stopPropagation();oRmEdit('bed1')">✎</button>
+    <span class="rib ron">on</span>
+   </div><div class="nrm " id="nav_walkin" onclick="clkRm('walkin')">
+    <span>👼</span>Walk-in Wardrobe
+    <button class="reb" onclick="event.stopPropagation();oRmEdit('walkin')">✎</button>
+    <span class="rib ron">on</span>
+   </div><div class="nrm " id="nav_sitting" onclick="clkRm('sitting')">
+    <span>🋲</span>Sitting Lounge
+    <button class="reb" onclick="event.stopPropagation();oRmEdit('sitting')">✎</button>
+    <span class="rib ron">on</span>
+   </div><div class="nrm " id="nav_mbed" onclick="clkRm('mbed')">
+    <span>🏠</span>Master Bedroom
+    <button class="reb" onclick="event.stopPropagation();oRmEdit('mbed')">✎</button>
+    <span class="rib ron">on</span>
+   </div><div class="nrm " id="nav_mbath" onclick="clkRm('mbath')">
+    <span>💧</span>Master Bathroom
+    <button class="reb" onclick="event.stopPropagation();oRmEdit('mbath')">✎</button>
+    <span class="rib ron">on</span>
+   </div><div class="nrm " id="nav_mward" onclick="clkRm('mward')">
+    <span>👼</span>Master Wardrobe
+    <button class="reb" onclick="event.stopPropagation();oRmEdit('mward')">✎</button>
+    <span class="rib ron">on</span>
+   </div><div class="nrm " id="nav_kbed" onclick="clkRm('kbed')">
+    <span>⭐</span>Kids Bedroom
+    <button class="reb" onclick="event.stopPropagation();oRmEdit('kbed')">✎</button>
+    <span class="rib ron">on</span>
+   </div><div class="nrm " id="nav_kbath" onclick="clkRm('kbath')">
+    <span>💧</span>Kids Bathroom
+    <button class="reb" onclick="event.stopPropagation();oRmEdit('kbath')">✎</button>
+    <span class="rib ron">on</span>
+   </div><div class="nrm " id="nav_gym" onclick="clkRm('gym')">
+    <span>🏋</span>Gym
+    <button class="reb" onclick="event.stopPropagation();oRmEdit('gym')">✎</button>
+    <span class="rib ron">on</span>
+   </div>
+   <button class="add-rm" onclick="addRoom('ff')">+ Add room</button>
+  </div><div class="nfl" onclick="tgNF('nfl_out',this)">
+   <span>🌳</span>Outdoor<span class="nfb">10/10</span>
+   <button class="fed" onclick="event.stopPropagation();oFlEdit('out')">✎</button>
+   <span class="ci">▼</span>
+  </div>
+  <div id="nfl_out">
+   <div class="nrm " id="nav_gate" onclick="clkRm('gate')">
+    <span>🚪</span>Main Gate
+    <button class="reb" onclick="event.stopPropagation();oRmEdit('gate')">✎</button>
+    <span class="rib ron">on</span>
+   </div><div class="nrm " id="nav_drive" onclick="clkRm('drive')">
+    <span>🚗</span>Driveway
+    <button class="reb" onclick="event.stopPropagation();oRmEdit('drive')">✎</button>
+    <span class="rib ron">on</span>
+   </div><div class="nrm " id="nav_park" onclick="clkRm('park')">
+    <span>🚗</span>Parking
+    <button class="reb" onclick="event.stopPropagation();oRmEdit('park')">✎</button>
+    <span class="rib ron">on</span>
+   </div><div class="nrm " id="nav_gfron" onclick="clkRm('gfron')">
+    <span>🌿</span>Front Garden
+    <button class="reb" onclick="event.stopPropagation();oRmEdit('gfron')">✎</button>
+    <span class="rib ron">on</span>
+   </div><div class="nrm " id="nav_pool" onclick="clkRm('pool')">
+    <span>💧</span>Pool Area
+    <button class="reb" onclick="event.stopPropagation();oRmEdit('pool')">✎</button>
+    <span class="rib ron">on</span>
+   </div><div class="nrm " id="nav_terr" onclick="clkRm('terr')">
+    <span>🋲</span>Terrace
+    <button class="reb" onclick="event.stopPropagation();oRmEdit('terr')">✎</button>
+    <span class="rib ron">on</span>
+   </div><div class="nrm " id="nav_bbq" onclick="clkRm('bbq')">
+    <span>🍳</span>BBQ / Kitchen
+    <button class="reb" onclick="event.stopPropagation();oRmEdit('bbq')">✎</button>
+    <span class="rib ron">on</span>
+   </div><div class="nrm " id="nav_perg" onclick="clkRm('perg')">
+    <span>☀</span>Pergola
+    <button class="reb" onclick="event.stopPropagation();oRmEdit('perg')">✎</button>
+    <span class="rib ron">on</span>
+   </div><div class="nrm " id="nav_grear" onclick="clkRm('grear')">
+    <span>🌳</span>Rear Garden
+    <button class="reb" onclick="event.stopPropagation();oRmEdit('grear')">✎</button>
+    <span class="rib ron">on</span>
+   </div><div class="nrm " id="nav_bound" onclick="clkRm('bound')">
+    <span>🛡</span>Boundary
+    <button class="reb" onclick="event.stopPropagation();oRmEdit('bound')">✎</button>
+    <span class="rib ron">on</span>
+   </div>
+   <button class="add-rm" onclick="addRoom('out')">+ Add room</button>
+  </div></div>
+  <div class="nav-foot"><div class="nst"><div class="ndot"></div><span id="nst">36 of 36 active</span></div></div>
+ </div>
+ <!-- Main -->
+ <div class="main">
+  <div class="topbar">
+   <div class="tb-cr">K4 › <span id="tbTi">Floor Plan</span></div>
+   <div style="width:1px;height:14px;background:var(--b1)"></div>
+   <span style="font-size:10px;color:var(--t3)">Select a floor · click a room</span>
+   <div class="tb-r">
+    <button class="btn btn-im" onclick="openImport()">↑ Import</button>
+    <button class="btn" onclick="flOff()">Off</button>
+    <button class="btn" onclick="flOn()">On</button>
+    <button class="btn btn-te" onclick="oSB(null)">✦ Scene</button>
+    <button class="btn btn-ac" onclick="applyG(actSc)">▶ Apply</button>
+    <button class="btn btn-ex" onclick="exportHTML()">↓ Export</button>
+   </div>
+  </div>
+  <div class="workspace">
+   <!-- Floor plan -->
+   <div class="fpwrap" id="vFp">
+    <div class="ftabs" id="ftabs"><div class="ftab on3" id="ft_gf" onclick="swFl('gf')">
+   🏠 Ground floor <span class="fbc">14/14</span>
+   <span class="fte" onclick="event.stopPropagation();oFlEdit('gf')">✎</span>
+  </div><div class="ftab " id="ft_ff" onclick="swFl('ff')">
+   🏗 First floor <span class="fbc">12/12</span>
+   <span class="fte" onclick="event.stopPropagation();oFlEdit('ff')">✎</span>
+  </div><div class="ftab " id="ft_out" onclick="swFl('out')">
+   🌳 Outdoor <span class="fbc">10/10</span>
+   <span class="fte" onclick="event.stopPropagation();oFlEdit('out')">✎</span>
+  </div><div class="add-fl" onclick="addFloor()">+ Add floor</div></div>
+    <div class="fp-canvas" id="fpCv">
+     <div class="fp-inner" id="fpInner" style="width: 820px; height: 470px; position: relative;"><div class="rn lit " id="rn_bar" style="left:8px;top:8px;width:186px;height:142px;" onclick="clkRm('bar')">
+   <div class="rn-glow"></div>
+   <div class="rn-ic">🍻</div>
+   <div class="rn-lb">Bar Area</div>
+   <div class="rn-dots"><div class="rn-dot dot-sp" style="" title="Spot Lights: 60%"></div><div class="rn-dot dot-co" style="" title="Cove LED: 40%"></div><div class="rn-dot dot-le" style="" title="Bar Counter LED: 80%"></div><div class="rn-dot dot-pe" style="" title="Pendants: 70%"></div></div>
+   <div class="rn-pct">63%</div>
+  </div><div class="rn lit " id="rn_living" style="left:204px;top:8px;width:220px;height:142px;" onclick="clkRm('living')">
+   <div class="rn-glow"></div>
+   <div class="rn-ic">🋲</div>
+   <div class="rn-lb">Living Area</div>
+   <div class="rn-dots"><div class="rn-dot dot-sp" style="" title="Spot Lights: 50%"></div><div class="rn-dot dot-co" style="" title="Cove LED: 35%"></div><div class="rn-dot dot-fl" style="" title="Floor Lamp: 60%"></div></div>
+   <div class="rn-pct">48%</div>
+  </div><div class="rn lit " id="rn_dining" style="left:434px;top:8px;width:178px;height:86px;" onclick="clkRm('dining')">
+   <div class="rn-glow"></div>
+   <div class="rn-ic">🍳</div>
+   <div class="rn-lb">Dining Room</div>
+   <div class="rn-dots"><div class="rn-dot dot-sp" style="" title="Chandelier: 70%"></div><div class="rn-dot dot-sp" style="" title="Spot Lights: 40%"></div><div class="rn-dot dot-co" style="" title="Cove LED: 30%"></div></div>
+   <div class="rn-pct">47%</div>
+  </div><div class="rn lit " id="rn_showkit" style="left:622px;top:8px;width:185px;height:86px;" onclick="clkRm('showkit')">
+   <div class="rn-glow"></div>
+   <div class="rn-ic">🍳</div>
+   <div class="rn-lb">Show Kitchen</div>
+   <div class="rn-dots"><div class="rn-dot dot-sp" style="" title="Spot Lights: 100%"></div><div class="rn-dot dot-co" style="" title="Under Cabinet: 80%"></div><div class="rn-dot dot-pe" style="" title="Pendant Bar: 60%"></div></div>
+   <div class="rn-pct">80%</div>
+  </div><div class="rn lit " id="rn_majlis" style="left:8px;top:160px;width:186px;height:108px;" onclick="clkRm('majlis')">
+   <div class="rn-glow"></div>
+   <div class="rn-ic">🋲</div>
+   <div class="rn-lb">Majlis</div>
+   <div class="rn-dots"><div class="rn-dot dot-sp" style="" title="Spot Lights: 40%"></div><div class="rn-dot dot-co" style="" title="Cove LED: 30%"></div><div class="rn-dot dot-pe" style="" title="Pendant: 60%"></div></div>
+   <div class="rn-pct">43%</div>
+  </div><div class="rn lit " id="rn_hallway" style="left:204px;top:160px;width:220px;height:76px;" onclick="clkRm('hallway')">
+   <div class="rn-glow"></div>
+   <div class="rn-ic">🗽</div>
+   <div class="rn-lb">Hall Way</div>
+   <div class="rn-dots"><div class="rn-dot dot-sp" style="" title="Spot Lights: 30%"></div><div class="rn-dot dot-co" style="" title="Cove LED: 20%"></div></div>
+   <div class="rn-pct">25%</div>
+  </div><div class="rn lit " id="rn_kitchen" style="left:622px;top:104px;width:185px;height:130px;" onclick="clkRm('kitchen')">
+   <div class="rn-glow"></div>
+   <div class="rn-ic">🍳</div>
+   <div class="rn-lb">Kitchen</div>
+   <div class="rn-dots"><div class="rn-dot dot-sp" style="" title="Spot Lights: 100%"></div><div class="rn-dot dot-co" style="" title="Under Cabinet: 80%"></div><div class="rn-dot dot-pe" style="" title="Pendant Bar: 60%"></div></div>
+   <div class="rn-pct">80%</div>
+  </div><div class="rn lit " id="rn_foyer" style="left:204px;top:246px;width:102px;height:72px;" onclick="clkRm('foyer')">
+   <div class="rn-glow"></div>
+   <div class="rn-ic">🚪</div>
+   <div class="rn-lb">Foyer</div>
+   <div class="rn-dots"><div class="rn-dot dot-sp" style="" title="Chandelier: 80%"></div><div class="rn-dot dot-sp" style="" title="Spot Lights: 60%"></div><div class="rn-dot dot-le" style="" title="Built-in LED: 40%"></div></div>
+   <div class="rn-pct">60%</div>
+  </div><div class="rn lit " id="rn_powder" style="left:204px;top:328px;width:102px;height:56px;" onclick="clkRm('powder')">
+   <div class="rn-glow"></div>
+   <div class="rn-ic">💧</div>
+   <div class="rn-lb">Powder Room</div>
+   <div class="rn-dots"><div class="rn-dot dot-sp" style="" title="Spot Lights: 80%"></div><div class="rn-dot dot-mi" style="" title="Mirror LED: 60%"></div></div>
+   <div class="rn-pct">70%</div>
+  </div><div class="rn lit " id="rn_gbath" style="left:316px;top:246px;width:110px;height:76px;" onclick="clkRm('gbath')">
+   <div class="rn-glow"></div>
+   <div class="rn-ic">💧</div>
+   <div class="rn-lb">Guest Bathroom</div>
+   <div class="rn-dots"><div class="rn-dot dot-sp" style="" title="Spot Lights: 80%"></div><div class="rn-dot dot-mi" style="" title="Mirror LED: 60%"></div><div class="rn-dot dot-va" style="" title="Vanity LED: 50%"></div></div>
+   <div class="rn-pct">63%</div>
+  </div><div class="rn lit " id="rn_corr_g" style="left:434px;top:246px;width:190px;height:76px;" onclick="clkRm('corr_g')">
+   <div class="rn-glow"></div>
+   <div class="rn-ic">🗽</div>
+   <div class="rn-lb">Corridor</div>
+   <div class="rn-dots"><div class="rn-dot dot-sp" style="" title="Spot Lights: 30%"></div><div class="rn-dot dot-co" style="" title="Cove LED: 20%"></div></div>
+   <div class="rn-pct">25%</div>
+  </div><div class="rn lit " id="rn_office" style="left:8px;top:278px;width:148px;height:112px;" onclick="clkRm('office')">
+   <div class="rn-glow"></div>
+   <div class="rn-ic">💼</div>
+   <div class="rn-lb">Office</div>
+   <div class="rn-dots"><div class="rn-dot dot-sp" style="" title="Spot Lights: 70%"></div><div class="rn-dot dot-co" style="" title="Cove LED: 30%"></div><div class="rn-dot dot-fl" style="" title="Desk Lamp: 100%"></div></div>
+   <div class="rn-pct">67%</div>
+  </div><div class="rn lit " id="rn_gbed" style="left:316px;top:332px;width:180px;height:100px;" onclick="clkRm('gbed')">
+   <div class="rn-glow"></div>
+   <div class="rn-ic">🏠</div>
+   <div class="rn-lb">Guest Bedroom</div>
+   <div class="rn-dots"><div class="rn-dot dot-sp" style="" title="Spot Lights: 40%"></div><div class="rn-dot dot-co" style="" title="Cove LED: 30%"></div><div class="rn-dot dot-jo" style="" title="Joinery LED: 25%"></div></div>
+   <div class="rn-pct">32%</div>
+  </div><div class="rn lit " id="rn_corr_b" style="left:8px;top:400px;width:800px;height:62px;" onclick="clkRm('corr_b')">
+   <div class="rn-glow"></div>
+   <div class="rn-ic">🗽</div>
+   <div class="rn-lb">Ground Corridor</div>
+   <div class="rn-dots"><div class="rn-dot dot-sp" style="" title="Spot Lights: 30%"></div><div class="rn-dot dot-co" style="" title="Cove LED: 20%"></div></div>
+   <div class="rn-pct">25%</div>
+  </div></div>
+    </div>
+    <div style="height:26px;background:var(--s1);border-top:1px solid var(--b1);display:flex;align-items:center;padding:0 12px;gap:12px;font-size:9px;color:var(--t3);flex-shrink:0;">
+     <span>▦ <span id="ovFl">Ground floor</span></span>
+     <span style="color:var(--go)">● Active: <span id="ovAc">14/14</span></span>
+     <span style="color:var(--ac)">✦ Scene: <span id="ovSc">Scene 1</span></span>
+     <span style="margin-left:auto">
+      <button class="btn" style="font-size:9px;padding:2px 8px" onclick="flOn()">☀ All on</button>&nbsp;
+      <button class="btn" style="font-size:9px;padding:2px 8px;color:var(--go)" onclick="flOff()">☾ All off</button>
+     </span>
+    </div>
+   </div>
+   <!-- Scenes -->
+   <div class="gview" id="vSc" style="display:none">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+     <div><div style="font-size:12px;font-weight:600">Scene library</div><div style="font-size:9px;color:var(--t3);margin-top:2px">Tap to apply globally · hover to edit · teal = custom</div></div>
+     <button class="btn btn-te" onclick="oSB(null)">+ Build</button>
+    </div>
+    <div class="gs-grid" id="gsGrid"></div>
+   </div>
+   <!-- Schedules -->
+   <div class="gview" id="vSh" style="display:none">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+     <div><div style="font-size:12px;font-weight:600">Automation schedules</div><div style="font-size:9px;color:var(--t3);margin-top:2px">Home-wide timed scenes</div></div>
+     <button class="btn" onclick="addGSch()">+ Add</button>
+    </div>
+    <div id="gSchList"></div>
+   </div>
+  </div>
+  <div class="sbar">
+   <div class="sbi">🏠 <span id="sb1">36 rooms</span></div>
+   <div class="sbi" style="color:var(--gr)">● <span id="sb2">36 active</span></div>
+   <div class="sbi" style="color:var(--ac)">✦ <span id="sb3">Scene 1 scene</span></div>
+   <div class="sbi" style="color:var(--te)">★ <span id="sb4">0 custom</span></div>
+   <div class="sbi" style="margin-left:auto;color:var(--gr)">● <span id="sb5">Online · SD_5036 V7.0</span></div>
+  </div>
+ </div>
+ <!-- Right panel -->
+ <div class="rp">
+  <div class="rp-head">
+   <div class="rp-ico" id="rpIco">🏠</div>
+   <div style="flex:1;min-width:0"><div class="rp-ti" id="rpTi">Select a room</div><div class="rp-su" id="rpSu">Click any room</div></div>
+   <button class="tog" id="rpTog" onclick="togRoom()"></button>
+  </div>
+  <div class="rp-tabs">
+   <div class="rp-tab on" onclick="swTab('ct',this)">Controls</div>
+   <div class="rp-tab" onclick="swTab('sc',this)">Scenes</div>
+   <div class="rp-tab" onclick="swTab('au',this)">Auto</div>
+  </div>
+  <div class="rp-body" id="rpBody"><div class="emp"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M3 9h18M9 21V9"></path></svg><div>Select a room</div></div></div>
+ </div>
+</div>
+
+<!-- Modals -->
+<div class="mo" id="pjMo">
+ <div class="md sm">
+  <div class="mh"><div class="mh-ic" style="background:var(--ag);color:var(--ac)">🏠</div>
+   <div><div class="mh-ti">Project settings</div><div class="mh-su">Edit name, reference &amp; client</div></div>
+   <button class="mhc" onclick="cM('pjMo')">×</button>
+  </div>
+  <div class="mb">
+   <div class="fi-row"><div class="fi"><label>Project name</label><input id="pm0" placeholder="Villa 08"></div><div class="fi"><label>Cluster / Block</label><input id="pm1" placeholder="Cluster 28"></div></div>
+   <div class="fi-row"><div class="fi"><label>Unit number</label><input id="pm2" placeholder="Villa 08"></div><div class="fi"><label>Drawing ref</label><input id="pm3" placeholder="SD_5036 V7.0"></div></div>
+   <div class="fi"><label>Development / Location</label><input id="pm4" placeholder="Jumeirah Islands, Dubai"></div>
+   <div class="fi"><label>Client name</label><input id="pm5" placeholder="Client name"></div>
+   <div class="fi"><label>Notes</label><textarea id="pm6" placeholder="Additional notes..."></textarea></div>
+  </div>
+  <div class="mft"><button class="btn" onclick="cM('pjMo')">Cancel</button><button class="btn btn-ac" onclick="savePj()">Save</button></div>
+ </div>
+</div>
+<div class="mo" id="flMo">
+ <div class="md sm">
+  <div class="mh"><div class="mh-ic" style="background:var(--ag);color:var(--ac)">▦</div>
+   <div><div class="mh-ti" id="flMoT">Edit floor</div><div class="mh-su">Name and icon</div></div>
+   <button class="mhc" onclick="cM('flMo')">×</button>
+  </div>
+  <div class="mb">
+   <div class="fi"><label>Floor name</label><input id="fl0" placeholder="Ground floor"></div>
+   <div class="fi"><label>Icon</label><div class="ip" id="flIps"></div></div>
+   <div class="fi"><button class="btn" style="color:var(--rd);border-color:var(--rd)" onclick="delFloor()">Delete floor &amp; all rooms</button></div>
+  </div>
+  <div class="mft"><button class="btn" onclick="cM('flMo')">Cancel</button><button class="btn btn-ac" onclick="saveFloor()">Save</button></div>
+ </div>
+</div>
+<div class="mo" id="rmMo">
+ <div class="md md2">
+  <div class="mh"><div class="mh-ic" style="background:var(--gg);color:var(--go)">🏠</div>
+   <div><div class="mh-ti" id="rmMoT">Edit room</div><div class="mh-su">Name, icon &amp; circuits</div></div>
+   <button class="mhc" onclick="cM('rmMo')">×</button>
+  </div>
+  <div class="mb" id="rmMoB"></div>
+  <div class="mft">
+   <button class="btn" style="color:var(--rd);border-color:var(--rd);margin-right:auto" onclick="delRoom()">Delete room</button>
+   <button class="btn" onclick="cM('rmMo')">Cancel</button>
+   <button class="btn btn-ac" onclick="saveRoom()">Save room</button>
+  </div>
+ </div>
+</div>
+<div class="mo" id="sbMo">
+ <div class="md lg">
+  <div class="mh"><div class="mh-ic" style="background:var(--tg);color:var(--te)">✦</div>
+   <div><div class="mh-ti" id="sbMoT">Build custom scene</div><div class="mh-su">Select lights · brightness · curtains · A/C</div></div>
+   <button class="mhc" onclick="cM('sbMo')">×</button>
+  </div>
+  <div class="mb" id="sbMoB"></div>
+  <div class="mft"><button class="btn" onclick="cM('sbMo')">Cancel</button><button class="btn btn-go" onclick="saveSB()">Save scene</button></div>
+ </div>
+</div>
+<div class="mo" id="psMo">
+ <div class="md sm">
+  <div class="mh"><div class="mh-ic" style="background:var(--ag);color:var(--ac)">✦</div>
+   <div><div class="mh-ti">Edit scene</div><div class="mh-su">Name, label, icon</div></div>
+   <button class="mhc" onclick="cM('psMo')">×</button>
+  </div>
+  <div class="mb">
+   <div class="fi"><label>Scene name</label><input id="ps0"></div>
+   <div class="fi"><label>Description</label><input id="ps1"></div>
+   <div class="fi"><label>Icon (emoji)</label><input id="ps2" placeholder="☼"></div>
+  </div>
+  <div class="mft"><button class="btn" onclick="cM('psMo')">Cancel</button><button class="btn btn-ac" onclick="savePsScene()">Save</button></div>
+ </div>
+</div>
+
+<!-- Import panel -->
+<div class="imp-panel" id="impPanel">
+ <div class="imp-box">
+  <div class="mh">
+   <div class="mh-ic" style="background:linear-gradient(135deg,var(--ac),var(--te));color:#fff">✦</div>
+   <div><div class="mh-ti">AI Drawing Import</div><div class="mh-su">Upload drawings — AI extracts rooms, circuits &amp; scenes automatically</div></div>
+   <button class="mhc" onclick="closeImport()">×</button>
+  </div>
+  <div class="mb">
+   <div class="dz" id="dz">
+    <input type="file" id="fInput" multiple="" accept=".pdf,.png,.jpg,.jpeg,.xlsx,.docx,.csv,.txt" onchange="handleFiles(this.files)">
+    <div class="dz-ic">⇧</div>
+    <div class="dz-ti">Drop drawings here or click to browse</div>
+    <div class="dz-su">PDF drawings, PNG/JPG scans, Excel schedules, Word specs, CSV, text</div>
+    <div class="dz-ty"><span class="dz-t">PDF</span><span class="dz-t">PNG/JPG</span><span class="dz-t">XLSX</span><span class="dz-t">DOCX</span><span class="dz-t">CSV</span><span class="dz-t">TXT</span></div>
+   </div>
+   <div class="fl-list" id="flList"></div>
+   <div class="pp" id="pp"><div class="pp-lb" id="ppLb">Analysing…</div><div class="pp-bar"><div class="pp-fill" id="ppF" style="width:0%"></div></div><div class="pp-st" id="ppSt">Starting…</div></div>
+   <div class="pr" id="pr">
+    <div class="pr-ti">✦ Extraction complete — review before importing</div>
+    <div class="pr-s"><div class="pr-sl">Project details</div><div class="pr-chips" id="prPj"></div></div>
+    <div class="pr-s"><div class="pr-sl">Floors &amp; rooms detected (uncheck to exclude)</div><div class="pr-chips" id="prRms"></div></div>
+    <div class="pr-s"><div class="pr-sl">Scenes suggested</div><div class="pr-chips" id="prScs"></div></div>
+    <div class="pr-raw" id="prRaw"></div>
+   </div>
+  </div>
+  <div class="mft" style="justify-content:space-between;align-items:center">
+   <div style="font-size:9px;color:var(--t3)" id="impHint">PDF, PNG, JPG, DOCX, XLSX, CSV, TXT</div>
+   <div style="display:flex;gap:7px">
+    <button class="btn" onclick="closeImport()">Cancel</button>
+    <button class="btn" id="parsBtn" onclick="startParse()" disabled="" style="opacity:.45">✦ Parse files</button>
+    <button class="btn btn-ac" id="impBtn" onclick="importData()" style="display:none">↓ Import</button>
+   </div>
+  </div>
+ </div>
+</div>
+
+<div class="toast" id="toast"><div class="toast-ti" id="toTi"></div><div class="toast-bd" id="toBd"></div></div>
+
+<script>
+/* ═══════════════════════════════════════════
+   K4 SMART HOME CONFIGURATOR
+   Clean, fast, fully editable
+   ═══════════════════════════════════════════ */
+
+// ── Light type map (abbrev keys for speed) ──
+const LT={
+ sp:{lb:'Spot Light',  cl:'ic-sp',sl:'sl-sp',dc:'dot-sp',em:'&#9673;'},
+ co:{lb:'Cove LED',    cl:'ic-co',sl:'sl-co',dc:'dot-co',em:'&#9644;'},
+ le:{lb:'LED Strip',   cl:'ic-le',sl:'sl-co',dc:'dot-le',em:'&#9644;'},
+ pe:{lb:'Pendant',     cl:'ic-pe',sl:'sl-pe',dc:'dot-pe',em:'&#9900;'},
+ tr:{lb:'Track Light', cl:'ic-tr',sl:'sl-tr',dc:'dot-tr',em:'&#9607;'},
+ wa:{lb:'Wall Light',  cl:'ic-wa',sl:'sl-wa',dc:'dot-wa',em:'&#11035;'},
+ ch:{lb:'Chandelier',  cl:'ic-ch',sl:'sl-sp',dc:'dot-sp',em:'&#9729;'},
+ un:{lb:'Under Cabinet',cl:'ic-un',sl:'sl-co',dc:'dot-co',em:'&#9644;'},
+ jo:{lb:'Joinery LED', cl:'ic-jo',sl:'sl-co',dc:'dot-jo',em:'&#9644;'},
+ fl:{lb:'Floor Lamp',  cl:'ic-fl',sl:'sl-pe',dc:'dot-fl',em:'&#9900;'},
+ mi:{lb:'Mirror LED',  cl:'ic-mi',sl:'sl-co',dc:'dot-mi',em:'&#9644;'},
+ va:{lb:'Vanity LED',  cl:'ic-va',sl:'sl-co',dc:'dot-va',em:'&#9644;'},
+ st:{lb:'Stair LED',   cl:'ic-st',sl:'sl-co',dc:'dot-st',em:'&#9644;'},
+ ou:{lb:'Outdoor',     cl:'ic-ou',sl:'sl-wa',dc:'dot-ou',em:'&#9728;'},
+ bo:{lb:'Bollard',     cl:'ic-bo',sl:'sl-wa',dc:'dot-wa',em:'&#9608;'},
+ up:{lb:'Uplighter',   cl:'ic-up',sl:'sl-wa',dc:'dot-wa',em:'&#9651;'},
+ po:{lb:'Pool Light',  cl:'ic-po',sl:'sl-wa',dc:'dot-po',em:'&#9675;'},
+ cu:{lb:'Curtain',     cl:'ic-cu',sl:'',    dc:null,      em:'&#9614;'},
+ ac:{lb:'A/C',         cl:'ic-ac',sl:'',    dc:null,      em:'&#10052;'},
+ he:{lb:'Heated Floor',cl:'ic-he',sl:'',    dc:null,      em:'&#9830;'},
+ ex:{lb:'Exhaust Fan', cl:'ic-ex',sl:'',    dc:null,      em:'&#8859;'},
+ sv:{lb:'Service',     cl:'ic-sv',sl:'sl-sp',dc:'dot-sp', em:'&#9711;'},
+};
+function lt(t){return LT[t]||LT.sv;}
+
+// ── Room icons (emoji — no CDN needed) ──
+const RI=['&#127968;','&#127730;','&#127749;','&#127859;','&#128167;','&#127947;','&#128124;','&#128682;','&#128509;','&#128221;','&#128229;','&#128188;','&#11088;','&#128663;','&#127867;','&#127807;','&#127795;','&#128737;','&#128161;','&#128704;'];
+const FI=['&#127968;','&#127959;','&#127766;','&#127795;','&#127946;','&#9728;','&#127760;'];
+const SI=['&#10022;','&#9728;','&#9790;','&#10084;','&#128198;','&#127909;','&#128218;','&#127881;','&#11088;','&#9749;','&#128161;','&#128258;','&#128164;','&#127795;','&#128293;','&#127926;'];
+
+// ── Default project ──
+let pj={nm:'Villa 08',cl:'Cluster 28',un:'Villa 08',lo:'Jumeirah Islands, Dubai',dc:'SD_5036 V7.0',ct:'',nt:''};
+
+// ── Floor & room data ──
+let F={
+ gf:{lb:'Ground floor',ic:'&#127968;',cW:820,cH:470,rooms:[
+  {id:'bar',nm:'Bar Area',ic:'&#127867;',x:8,y:8,w:186,h:142,crc:[{n:'Spot Lights',t:'sp',p:60,tg:''},{n:'Cove LED',t:'co',p:40,tg:''},{n:'Bar Counter LED',t:'le',p:80,tg:'LED'},{n:'Pendants',t:'pe',p:70,tg:''}]},
+  {id:'living',nm:'Living Area',ic:'&#127730;',x:204,y:8,w:220,h:142,crc:[{n:'Spot Lights',t:'sp',p:50,tg:''},{n:'Cove LED',t:'co',p:35,tg:''},{n:'Floor Lamp',t:'fl',p:60,tg:''},{n:'Curtains Sheer',t:'cu',p:null,tg:'TD'},{n:'Curtains Blackout',t:'cu',p:null,tg:'TD'},{n:'A/C',t:'ac',p:null,tg:''}]},
+  {id:'dining',nm:'Dining Room',ic:'&#127859;',x:434,y:8,w:178,h:86,crc:[{n:'Chandelier',t:'ch',p:70,tg:''},{n:'Spot Lights',t:'sp',p:40,tg:''},{n:'Cove LED',t:'co',p:30,tg:''}]},
+  {id:'showkit',nm:'Show Kitchen',ic:'&#127859;',x:622,y:8,w:185,h:86,crc:[{n:'Spot Lights',t:'sp',p:100,tg:''},{n:'Under Cabinet',t:'un',p:80,tg:'LED'},{n:'Pendant Bar',t:'pe',p:60,tg:''}]},
+  {id:'majlis',nm:'Majlis',ic:'&#127730;',x:8,y:160,w:186,h:108,crc:[{n:'Spot Lights',t:'sp',p:40,tg:''},{n:'Cove LED',t:'co',p:30,tg:''},{n:'Pendant',t:'pe',p:60,tg:''},{n:'Curtains Sheer',t:'cu',p:null,tg:'TD'},{n:'Curtains Blackout',t:'cu',p:null,tg:'TD'},{n:'A/C',t:'ac',p:null,tg:''}]},
+  {id:'hallway',nm:'Hall Way',ic:'&#128509;',x:204,y:160,w:220,h:76,crc:[{n:'Spot Lights',t:'sp',p:30,tg:''},{n:'Cove LED',t:'co',p:20,tg:''}]},
+  {id:'kitchen',nm:'Kitchen',ic:'&#127859;',x:622,y:104,w:185,h:130,crc:[{n:'Spot Lights',t:'sp',p:100,tg:''},{n:'Under Cabinet',t:'un',p:80,tg:'LED'},{n:'Pendant Bar',t:'pe',p:60,tg:''}]},
+  {id:'foyer',nm:'Foyer',ic:'&#128682;',x:204,y:246,w:102,h:72,crc:[{n:'Chandelier',t:'ch',p:80,tg:''},{n:'Spot Lights',t:'sp',p:60,tg:''},{n:'Built-in LED',t:'le',p:40,tg:'MS'}]},
+  {id:'powder',nm:'Powder Room',ic:'&#128167;',x:204,y:328,w:102,h:56,crc:[{n:'Spot Lights',t:'sp',p:80,tg:''},{n:'Mirror LED',t:'mi',p:60,tg:'MS'},{n:'Exhaust',t:'ex',p:null,tg:''}]},
+  {id:'gbath',nm:'Guest Bathroom',ic:'&#128167;',x:316,y:246,w:110,h:76,crc:[{n:'Spot Lights',t:'sp',p:80,tg:''},{n:'Mirror LED',t:'mi',p:60,tg:'MS'},{n:'Vanity LED',t:'va',p:50,tg:'MS'},{n:'Exhaust',t:'ex',p:null,tg:''}]},
+  {id:'corr_g',nm:'Corridor',ic:'&#128509;',x:434,y:246,w:190,h:76,crc:[{n:'Spot Lights',t:'sp',p:30,tg:''},{n:'Cove LED',t:'co',p:20,tg:''}]},
+  {id:'office',nm:'Office',ic:'&#128188;',x:8,y:278,w:148,h:112,crc:[{n:'Spot Lights',t:'sp',p:70,tg:''},{n:'Cove LED',t:'co',p:30,tg:''},{n:'Desk Lamp',t:'fl',p:100,tg:''},{n:'A/C',t:'ac',p:null,tg:''}]},
+  {id:'gbed',nm:'Guest Bedroom',ic:'&#127968;',x:316,y:332,w:180,h:100,crc:[{n:'Spot Lights',t:'sp',p:40,tg:''},{n:'Cove LED',t:'co',p:30,tg:''},{n:'Joinery LED',t:'jo',p:25,tg:'LED'},{n:'Curtains Sheer',t:'cu',p:null,tg:'KP'},{n:'Curtains Blackout',t:'cu',p:null,tg:'KP'},{n:'A/C',t:'ac',p:null,tg:''}]},
+  {id:'corr_b',nm:'Ground Corridor',ic:'&#128509;',x:8,y:400,w:800,h:62,crc:[{n:'Spot Lights',t:'sp',p:30,tg:''},{n:'Cove LED',t:'co',p:20,tg:''}]},
+ ]},
+ ff:{lb:'First floor',ic:'&#127959;',cW:820,cH:450,rooms:[
+  {id:'corr_f',nm:'First Corridor',ic:'&#128509;',x:8,y:8,w:802,h:62,crc:[{n:'Spot Lights',t:'sp',p:30,tg:''},{n:'Cove LED',t:'co',p:20,tg:''}]},
+  {id:'bed2',nm:'Bedroom 02',ic:'&#127968;',x:8,y:80,w:180,h:150,crc:[{n:'Spot Lights',t:'sp',p:40,tg:''},{n:'Cove LED',t:'co',p:30,tg:''},{n:'Joinery LED',t:'jo',p:25,tg:'LED'},{n:'Curtains Sheer',t:'cu',p:null,tg:'KP'},{n:'Curtains Blackout',t:'cu',p:null,tg:'KP'},{n:'A/C',t:'ac',p:null,tg:''}]},
+  {id:'bath2',nm:'Bathroom 02',ic:'&#128167;',x:8,y:240,w:102,h:80,crc:[{n:'Spot Lights',t:'sp',p:80,tg:''},{n:'Mirror LED',t:'mi',p:60,tg:'MS'},{n:'Exhaust',t:'ex',p:null,tg:''}]},
+  {id:'bed1',nm:'Bedroom 01',ic:'&#127968;',x:8,y:330,w:180,h:114,crc:[{n:'Spot Lights',t:'sp',p:40,tg:''},{n:'Cove LED',t:'co',p:30,tg:''},{n:'Joinery LED',t:'jo',p:25,tg:'LED'},{n:'Curtains Sheer',t:'cu',p:null,tg:'KP'},{n:'Curtains Blackout',t:'cu',p:null,tg:'KP'},{n:'A/C',t:'ac',p:null,tg:''}]},
+  {id:'walkin',nm:'Walk-in Wardrobe',ic:'&#128124;',x:198,y:80,w:152,h:92,crc:[{n:'Spot Lights',t:'sp',p:60,tg:''},{n:'Joinery LED',t:'jo',p:40,tg:'MS'}]},
+  {id:'sitting',nm:'Sitting Lounge',ic:'&#127730;',x:198,y:182,w:222,h:92,crc:[{n:'Spot Lights',t:'sp',p:50,tg:''},{n:'Cove LED',t:'co',p:35,tg:''},{n:'Curtains Sheer',t:'cu',p:null,tg:'TD'},{n:'A/C',t:'ac',p:null,tg:''}]},
+  {id:'mbed',nm:'Master Bedroom',ic:'&#127968;',x:430,y:80,w:220,h:178,crc:[{n:'Spot Lights',t:'sp',p:40,tg:''},{n:'Cove LED',t:'co',p:30,tg:''},{n:'Joinery LED',t:'jo',p:25,tg:'LED'},{n:'Pendant',t:'pe',p:50,tg:''},{n:'Curtains Sheer',t:'cu',p:null,tg:'KP'},{n:'Curtains Blackout',t:'cu',p:null,tg:'KP'},{n:'A/C',t:'ac',p:null,tg:''}]},
+  {id:'mbath',nm:'Master Bathroom',ic:'&#128167;',x:660,y:80,w:152,h:102,crc:[{n:'Spot Lights',t:'sp',p:80,tg:''},{n:'Mirror LED',t:'mi',p:60,tg:'MS'},{n:'Vanity LED',t:'va',p:50,tg:'MS'},{n:'Heated Floor',t:'he',p:null,tg:''},{n:'Exhaust',t:'ex',p:null,tg:''}]},
+  {id:'mward',nm:'Master Wardrobe',ic:'&#128124;',x:660,y:192,w:152,h:82,crc:[{n:'Spot Lights',t:'sp',p:60,tg:''},{n:'Joinery LED',t:'jo',p:40,tg:'MS'}]},
+  {id:'kbed',nm:"Kids Bedroom",ic:'&#11088;',x:358,y:282,w:152,h:122,crc:[{n:'Spot Lights',t:'sp',p:40,tg:''},{n:'Cove LED',t:'co',p:30,tg:''},{n:'Joinery LED',t:'jo',p:20,tg:'LED'},{n:'Curtains Sheer',t:'cu',p:null,tg:'KP'},{n:'Curtains Blackout',t:'cu',p:null,tg:'KP'},{n:'A/C',t:'ac',p:null,tg:''}]},
+  {id:'kbath',nm:"Kids Bathroom",ic:'&#128167;',x:520,y:282,w:96,h:72,crc:[{n:'Spot Lights',t:'sp',p:80,tg:''},{n:'Mirror LED',t:'mi',p:60,tg:'MS'},{n:'Exhaust',t:'ex',p:null,tg:''}]},
+  {id:'gym',nm:'Gym',ic:'&#127947;',x:626,y:282,w:186,h:122,crc:[{n:'Track Lights',t:'tr',p:100,tg:''},{n:'Cove LED',t:'co',p:30,tg:''}]},
+ ]},
+ out:{lb:'Outdoor',ic:'&#127795;',cW:820,cH:400,rooms:[
+  {id:'gate',nm:'Main Gate',ic:'&#128682;',x:8,y:8,w:200,h:88,crc:[{n:'Pillar Lights',t:'sp',p:60,tg:''},{n:'Pathway LED',t:'le',p:40,tg:''},{n:'Canopy',t:'sp',p:80,tg:''}]},
+  {id:'drive',nm:'Driveway',ic:'&#128663;',x:218,y:8,w:200,h:88,crc:[{n:'Bollards',t:'bo',p:50,tg:''},{n:'Ground LED',t:'le',p:30,tg:''}]},
+  {id:'park',nm:'Parking',ic:'&#128663;',x:428,y:8,w:185,h:88,crc:[{n:'Ceiling Lights',t:'sp',p:100,tg:''},{n:'LED Strip',t:'le',p:50,tg:''}]},
+  {id:'gfron',nm:'Front Garden',ic:'&#127807;',x:623,y:8,w:185,h:88,crc:[{n:'Uplighters',t:'up',p:60,tg:''},{n:'Pathway LED',t:'le',p:40,tg:''}]},
+  {id:'pool',nm:'Pool Area',ic:'&#128167;',x:8,y:106,w:258,h:178,crc:[{n:'Pool Lights',t:'po',p:80,tg:''},{n:'Deck LED',t:'le',p:50,tg:''},{n:'Perimeter',t:'wa',p:60,tg:''},{n:'Underwater LED',t:'le',p:40,tg:'LED'}]},
+  {id:'terr',nm:'Terrace',ic:'&#127730;',x:276,y:106,w:218,h:118,crc:[{n:'String Lights',t:'sp',p:50,tg:''},{n:'Cove LED',t:'co',p:40,tg:''},{n:'Wall Lights',t:'wa',p:60,tg:''}]},
+  {id:'bbq',nm:'BBQ / Kitchen',ic:'&#127859;',x:504,y:106,w:308,h:118,crc:[{n:'Task Lights',t:'sp',p:100,tg:''},{n:'Under Counter',t:'un',p:70,tg:''},{n:'Mood Lights',t:'ou',p:40,tg:''}]},
+  {id:'perg',nm:'Pergola',ic:'&#9728;',x:8,y:294,w:218,h:100,crc:[{n:'Pergola LED',t:'co',p:40,tg:''},{n:'Spot Lights',t:'sp',p:60,tg:''},{n:'String Lights',t:'le',p:50,tg:''}]},
+  {id:'grear',nm:'Rear Garden',ic:'&#127795;',x:236,y:294,w:218,h:100,crc:[{n:'Uplighters',t:'up',p:60,tg:''},{n:'Pathway LED',t:'le',p:40,tg:''}]},
+  {id:'bound',nm:'Boundary',ic:'&#128737;',x:464,y:294,w:348,h:100,crc:[{n:'Wall Lights',t:'wa',p:50,tg:''},{n:'Security Flood',t:'ou',p:80,tg:''},{n:'Perimeter LED',t:'le',p:30,tg:'MS'}]},
+ ]}
+};
+
+// ── Scenes ──
+let SC=[
+ {k:'s1',nm:'Scene 1',lb:'All ON 100%',ic:'&#128161;',sg:{pct:100,sh:'open',bk:'open',ac:24}},
+ {k:'s2',nm:'Scene 2',lb:'All 50%',ic:'&#9723;',sg:{pct:50}},
+ {k:'s3',nm:'Scene 3',lb:'All 25%',ic:'&#9724;',sg:{pct:25}},
+ {k:'s4',nm:'Morning',lb:'Off | Curtains open | A/C 24°',ic:'&#9728;',sg:{pct:0,sh:'open',bk:'open',ac:24}},
+ {k:'s5',nm:'Evening',lb:'50% | Curtains close | A/C 23.5°',ic:'&#9790;',sg:{pct:50,sh:'close',bk:'close',ac:23.5}},
+ {k:'s6',nm:'Romantic',lb:'Cove 30% | Spots 20% | Pendants 15%',ic:'&#10084;',sg:{cove:30,spot:20,pend:15,sh:'close',bk:'open'}},
+ {k:'s7',nm:'Sleep',lb:'All off | Curtains close | A/C 22.5°',ic:'&#128164;',sg:{pct:0,sh:'close',bk:'close',ac:22.5}},
+ {k:'cin',nm:'Cinema',lb:'Cove 10% | Spots off | Close all',ic:'&#127916;',sg:{cove:10,spot:0,pend:0,sh:'close',bk:'close',ac:23}},
+ {k:'pty',nm:'Party',lb:'100% | Curtains open',ic:'&#127881;',sg:{pct:100,sh:'open',bk:'open',ac:22}},
+ {k:'off',nm:'All OFF',lb:'All circuits off',ic:'&#9898;',sg:{pct:0}},
+];
+let CSC=[]; // custom scenes
+
+// ── State ──
+const ST={},AC={},CR={};
+function initSt(){
+ allR().forEach(r=>{
+  if(!ST[r.id]){ST[r.id]={on:true,sc:'s1',sch:[]};}
+  r.crc.forEach((c,i)=>{if(ST[r.id]['c'+i]===undefined)ST[r.id]['c'+i]=c.p;});
+  if(!AC[r.id])AC[r.id]=24;
+  if(!CR[r.id])CR[r.id]={sh:'open',bk:'open'};
+ });
+}
+
+// ── Vars ──
+let curFl='gf',selRm=null,actSc='s1',curV='fp',rpTab='ct';
+let editFl=null,editRm=null,editSc=null,editPs=null;
+let iFL='&#127968;',iRM='&#127968;',iSB='&#10022;';
+const DAYS=['Mo','Tu','We','Th','Fr','Sa','Su'];
+let _sb={nm:'',ic:'&#10022;',sh:null,bk:null,ac:false,acT:24,lts:{}};
+
+// ── Helpers ──
+function allR(){return Object.values(F).flatMap(f=>f.rooms);}
+function getR(id){return allR().find(r=>r.id===id);}
+function getF(fk){return F[fk];}
+function flOf(id){return Object.entries(F).find(([,f])=>f.rooms.find(r=>r.id===id))?.[0];}
+function allSC(){return[...SC,...CSC];}
+function avg(id){
+ const r=getR(id);if(!r)return null;
+ const v=r.crc.filter((c,i)=>c.p!==null&&ST[id]?.['c'+i]!=null).map((c,i)=>ST[id]['c'+i]);
+ return v.length?Math.round(v.reduce((a,b)=>a+b)/v.length):null;
+}
+function tgCls(t){return{MS:'tg-ms',KP:'tg-kp',TD:'tg-td',LED:'tg-le',Manual:'tg-ma'}[t]||'tg-ma';}
+
+// ── View switching ──
+function vw(v){
+ curV=v;
+ document.getElementById('vFp').style.display=v==='fp'?'':'none';
+ document.getElementById('vSc').style.display=v==='sc'?'':'none';
+ document.getElementById('vSh').style.display=v==='sh'?'':'none';
+ ['r0','r1','r2'].forEach((id,i)=>document.getElementById(id).classList.toggle('on',['fp','sc','sh'][i]===v));
+ document.getElementById('tbTi').textContent={fp:'Floor Plan',sc:'Scenes',sh:'Schedules'}[v];
+ if(v==='sc')renderGSC();
+ if(v==='sh')renderGSH();
+}
+
+// ── Floor tabs ──
+function buildTabs(){
+ const bar=document.getElementById('ftabs');
+ bar.innerHTML=Object.entries(F).map(([fk,fd])=>{
+  const on=fd.rooms.filter(r=>ST[r.id]?.on).length;
+  return`<div class="ftab ${curFl===fk?'on3':''}" id="ft_${fk}" onclick="swFl('${fk}')">
+   ${fd.ic} ${fd.lb} <span class="fbc">${on}/${fd.rooms.length}</span>
+   <span class="fte" onclick="event.stopPropagation();oFlEdit('${fk}')">&#9998;</span>
+  </div>`;
+ }).join('')+`<div class="add-fl" onclick="addFloor()">+ Add floor</div>`;
+}
+
+function swFl(fk){curFl=fk;selRm=null;buildTabs();buildFP();buildNav();rpDef();updStats();}
+
+// ── Floor plan ──
+function buildFP(){
+ const fd=F[curFl];if(!fd)return;
+ const inner=document.getElementById('fpInner');
+ inner.style.cssText=`width:${fd.cW}px;height:${fd.cH}px;position:relative;`;
+ inner.innerHTML=fd.rooms.map(r=>{
+  const st=ST[r.id]||{on:true};
+  const av=avg(r.id);
+  const lc=r.crc.filter(c=>c.p!==null&&!['cu','ac','he','ex'].includes(c.t));
+  const dots=lc.slice(0,5).map(c=>{
+   const li=lt(c.t);
+   const val=ST[r.id]?.['c'+r.crc.indexOf(c)];
+   return`<div class="rn-dot ${li.dc||''}" style="${!st.on||val===0?'opacity:.15':''}" title="${c.n}: ${val!=null?val+'%':'—'}"></div>`;
+  }).join('');
+  return`<div class="rn ${st.on?'lit':''} ${selRm===r.id?'sel':''}" id="rn_${r.id}"
+   style="left:${r.x}px;top:${r.y}px;width:${r.w}px;height:${r.h}px;" onclick="clkRm('${r.id}')">
+   <div class="rn-glow"></div>
+   <div class="rn-ic">${r.ic}</div>
+   <div class="rn-lb">${r.nm}</div>
+   <div class="rn-dots">${dots}</div>
+   <div class="rn-pct">${st.on?(av!==null?av+'%':'on'):'off'}</div>
+  </div>`;
+ }).join('');
+ document.getElementById('ovFl').textContent=fd.lb;
+ updStats();
+}
+
+function refreshRN(id){
+ const n=document.getElementById('rn_'+id);if(!n)return;
+ const r=getR(id);const st=ST[id]||{on:true};const av=avg(id);
+ n.className=`rn${st.on?' lit':''}${selRm===id?' sel':''}`;
+ const lc=r.crc.filter(c=>c.p!==null&&!['cu','ac','he','ex'].includes(c.t));
+ const dots=n.querySelector('.rn-dots');
+ if(dots)dots.innerHTML=lc.slice(0,5).map(c=>{
+  const li=lt(c.t);const val=ST[id]?.['c'+r.crc.indexOf(c)];
+  return`<div class="rn-dot ${li.dc||''}" style="${!st.on||val===0?'opacity:.15':''}"></div>`;
+ }).join('');
+ n.querySelector('.rn-pct').textContent=st.on?(av!==null?av+'%':'on'):'off';
+}
+
+// ── Stats ──
+function updStats(){
+ const fd=F[curFl];
+ const fOn=fd?fd.rooms.filter(r=>ST[r.id]?.on).length:0;
+ document.getElementById('ovAc').textContent=`${fOn}/${fd?.rooms.length||0}`;
+ document.getElementById('ovSc').textContent=allSC().find(s=>s.k===actSc)?.nm||'—';
+ Object.entries(F).forEach(([fk,fd])=>{
+  const el=document.getElementById('ft_'+fk);
+  if(el){const on=fd.rooms.filter(r=>ST[r.id]?.on).length;el.querySelector('.fbc').textContent=`${on}/${fd.rooms.length}`;}
+ });
+ const allOn=allR().filter(r=>ST[r.id]?.on).length,tot=allR().length;
+ document.getElementById('sb1').textContent=tot+' rooms';
+ document.getElementById('sb2').textContent=allOn+' active';
+ document.getElementById('sb3').textContent=(allSC().find(s=>s.k===actSc)?.nm||'—')+' scene';
+ document.getElementById('sb4').textContent=CSC.length+' custom';
+ document.getElementById('sb5').textContent=`Online · ${pj.dc}`;
+ document.getElementById('nst').textContent=`${allOn} of ${tot} active`;
+ document.getElementById('pjNm').textContent=pj.nm+' · '+pj.cl;
+ document.getElementById('pjMt').textContent=pj.lo+' · '+pj.dc;
+}
+
+// ── Nav ──
+function buildNav(){
+ document.getElementById('navScroll').innerHTML=Object.entries(F).map(([fk,fd])=>{
+  const on=fd.rooms.filter(r=>ST[r.id]?.on).length;
+  return`<div class="nfl" onclick="tgNF('nfl_${fk}',this)">
+   <span>${fd.ic}</span>${fd.lb}<span class="nfb">${on}/${fd.rooms.length}</span>
+   <button class="fed" onclick="event.stopPropagation();oFlEdit('${fk}')">&#9998;</button>
+   <span class="ci">&#9660;</span>
+  </div>
+  <div id="nfl_${fk}">
+   ${fd.rooms.map(r=>`<div class="nrm ${selRm===r.id?'on2':''}" id="nav_${r.id}" onclick="clkRm('${r.id}')">
+    <span>${r.ic}</span>${r.nm}
+    <button class="reb" onclick="event.stopPropagation();oRmEdit('${r.id}')">&#9998;</button>
+    <span class="rib ${ST[r.id]?.on?'ron':'roff'}">${ST[r.id]?.on?'on':'off'}</span>
+   </div>`).join('')}
+   <button class="add-rm" onclick="addRoom('${fk}')">+ Add room</button>
+  </div>`;
+ }).join('');
+}
+
+function tgNF(id,el){const e=document.getElementById(id);const h=e.style.display==='none';e.style.display=h?'':'none';el.classList.toggle('cl',!h);}
+function filterNav(q){document.querySelectorAll('[id^=nav_]').forEach(e=>{e.style.display=e.textContent.toLowerCase().includes(q.toLowerCase())?'':'none';});}
+
+// ── Room select ──
+function clkRm(id){
+ const fl=flOf(id);if(fl&&fl!==curFl)swFl(fl);
+ selRm=id;buildNav();buildFP();rpHead();rpBody();updStats();
+}
+function rpDef(){
+ document.getElementById('rpIco').className='rp-ico';
+ document.getElementById('rpIco').innerHTML='&#127968;';
+ document.getElementById('rpTi').textContent='Select a room';
+ document.getElementById('rpSu').textContent='Click any room';
+ document.getElementById('rpTog').className='tog';
+ document.getElementById('rpBody').innerHTML='<div class="emp"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg><div>Select a room</div></div>';
+}
+function rpHead(){
+ if(!selRm){rpDef();return;}
+ const r=getR(selRm),st=ST[selRm]||{on:true};
+ const ic=document.getElementById('rpIco');
+ ic.className='rp-ico'+(st.on?' lit':'');
+ ic.innerHTML=r.ic;
+ document.getElementById('rpTi').textContent=r.nm;
+ document.getElementById('rpSu').textContent=`${r.crc.length} circuits · ${st.on?'Active':'Off'} · ${F[flOf(selRm)]?.lb||''}`;
+ document.getElementById('rpTog').className='tog'+(st.on?' on':'');
+}
+function togRoom(){
+ if(!selRm)return;
+ if(!ST[selRm])ST[selRm]={on:true,sc:'s1',sch:[]};
+ ST[selRm].on=!ST[selRm].on;
+ rpHead();rpBody();refreshRN(selRm);buildNav();updStats();
+ toast(getR(selRm).nm,ST[selRm].on?'On':'Off');
+}
+function swTab(t,el){
+ rpTab=t;
+ document.querySelectorAll('.rp-tab').forEach(x=>x.classList.toggle('on',x===el));
+ rpBody();
+}
+function rpBody(){if(!selRm){rpDef();return;}if(rpTab==='ct')rCtrl();else if(rpTab==='sc')rRmSC();else rRmAU();}
+
+// ── Controls ──
+function rCtrl(){
+ const r=getR(selRm);if(!r)return;
+ const st=ST[selRm]||{on:true};
+ const hasCu=r.crc.some(c=>c.t==='cu');
+ const hasAC=r.crc.some(c=>c.t==='ac');
+ let h=`<div class="rp-sec">Lighting <button class="sb" onclick="oRmEdit('${selRm}')">&#9998; Edit room</button></div>`;
+ r.crc.filter(c=>!['cu','ac','he','ex'].includes(c.t)).forEach(c=>{
+  const i=r.crc.indexOf(c);
+  const val=ST[selRm]?.['c'+i];
+  const has=c.p!==null&&val!=null;
+  const v=has?Math.round(val):null;
+  const li=lt(c.t);
+  const off=!st.on||v===0;
+  h+=`<div class="cb ${off?'off':''}">
+   <div class="cb-h">
+    <div class="cb-ic ${li.cl}">${li.em}</div>
+    <div><div class="cb-nm">${c.n}${c.tg?` <span class="cb-tg ${tgCls(c.tg)}">${c.tg}</span>`:''}</div><div class="cb-tl">${li.lb}</div></div>
+    ${has?`<span class="cb-vl ${off?'off':''}" id="cv_${selRm}_${i}">${v}%</span>`:''}
+   </div>
+   ${has?`<input class="csl ${li.sl}" type="range" min="0" max="100" step="5" value="${v}" ${!st.on?'disabled':''} oninput="setC('${selRm}',${i},this.value)">`:
+    `<div style="font-size:9px;color:var(--t3)">Motion sensor / On-site</div>`}
+  </div>`;
+ });
+ if(hasCu){
+  const cs=CR[selRm]||{sh:'open',bk:'open'};
+  ['sh','bk'].forEach(k=>{
+   const lbl=k==='sh'?'Sheer':'Blackout';
+   h+=`<div class="rp-sec">${lbl} curtain</div>
+   <div class="ctrl">
+    <span style="font-size:16px">&#9614;</span>
+    <span class="ctrl-lb">${lbl}</span>
+    <div class="curt">${['open','half','close'].map(v=>`<button class="cbt ${cs[k]===v?'on':''}" onclick="setCu('${k}','${v}')">${v.charAt(0).toUpperCase()+v.slice(1)}</button>`).join('')}</div>
+   </div>`;
+  });
+ }
+ if(hasAC){
+  h+=`<div class="rp-sec">A/C temperature</div>
+  <div class="ctrl">
+   <span style="font-size:16px">&#10052;</span>
+   <span class="ctrl-lb">Temperature</span>
+   <div style="display:flex;align-items:center;gap:4px">
+    <button class="step" onclick="stepAC(-.5)">&#8722;</button>
+    <span class="ctrl-v" id="acV">${(AC[selRm]||24).toFixed(1)}&#176;C</span>
+    <button class="step" onclick="stepAC(.5)">+</button>
+   </div>
+  </div>`;
+ }
+ h+=`<div class="rp-sec">Quick set</div>
+ <div class="chips">
+  <button class="chip" onclick="setAll(100)">100%</button>
+  <button class="chip" onclick="setAll(75)">75%</button>
+  <button class="chip" onclick="setAll(50)">50%</button>
+  <button class="chip" onclick="setAll(25)">25%</button>
+  <button class="chip" onclick="setAll(0)">Off</button>
+ </div>`;
+ document.getElementById('rpBody').innerHTML=h;
+}
+
+function setC(rid,i,v){
+ if(!ST[rid])ST[rid]={on:true,sc:'s1',sch:[]};
+ ST[rid]['c'+i]=parseInt(v);
+ const el=document.getElementById('cv_'+rid+'_'+i);
+ if(el){el.textContent=Math.round(v)+'%';el.className='cb-vl '+(parseInt(v)===0?'off':'');}
+ refreshRN(rid);
+}
+function setCu(k,v){if(!CR[selRm])CR[selRm]={sh:'open',bk:'open'};CR[selRm][k]=v;rCtrl();}
+function stepAC(d){if(!AC[selRm])AC[selRm]=24;AC[selRm]=Math.round((AC[selRm]+d)*2)/2;AC[selRm]=Math.max(16,Math.min(30,AC[selRm]));const el=document.getElementById('acV');if(el)el.textContent=AC[selRm].toFixed(1)+'°C';}
+function setAll(v){
+ if(!selRm)return;
+ const r=getR(selRm);
+ if(!ST[selRm])ST[selRm]={on:true,sc:'s1',sch:[]};
+ r.crc.forEach((c,i)=>{if(c.p!==null)ST[selRm]['c'+i]=v;});
+ if(v===0)ST[selRm].on=false;else ST[selRm].on=true;
+ rpHead();rCtrl();refreshRN(selRm);buildNav();updStats();
+}
+
+// ── Room scenes tab ──
+function rRmSC(){
+ const cur=ST[selRm]?.sc||'s1';
+ let h=`<div class="rp-sec">Preset <button class="sb" onclick="oSB(null)">&#10022; New</button></div>
+ <div class="sl">${SC.map(s=>`<div class="st ${cur===s.k?'on':''}" onclick="applyRmSC('${s.k}')">
+  <div class="st-ic">${s.ic}</div>
+  <div style="flex:1;min-width:0"><div class="st-nm">${s.nm}</div><div class="st-ds">${s.lb}</div></div>
+  <div class="st-acts"><button class="sa" onclick="event.stopPropagation();oPsEdit('${s.k}')">&#9998;</button></div>
+ </div>`).join('')}</div>`;
+ if(CSC.length)h+=`<div class="rp-sec" style="margin-top:5px">Custom</div>
+ <div class="sl">${CSC.map(s=>`<div class="st cst ${cur===s.k?'on':''}" onclick="applyRmSC('${s.k}')">
+  <div class="st-ic">${s.ic}</div>
+  <div style="flex:1;min-width:0"><div class="st-nm">${s.nm}</div><div class="st-ds">${s.lb}</div></div>
+  <div class="st-acts">
+   <button class="sa" onclick="event.stopPropagation();oSB('${s.k}')">&#9998;</button>
+   <button class="sa del" onclick="event.stopPropagation();delCSC('${s.k}')">&#215;</button>
+  </div>
+ </div>`).join('')}</div>`;
+ h+=`<div style="margin-top:6px"><div class="add-row" onclick="oSB(null)">&#10022; Build custom scene</div></div>`;
+ document.getElementById('rpBody').innerHTML=h;
+}
+
+function applyRmSC(k){
+ const s=allSC().find(x=>x.k===k);if(!s)return;
+ const r=getR(selRm);
+ if(!ST[selRm])ST[selRm]={on:true,sc:'s1',sch:[]};
+ ST[selRm].sc=k;
+ if(s.roomLights&&s.roomLights[selRm]){Object.entries(s.roomLights[selRm]).forEach(([i,p])=>{ST[selRm]['c'+i]=p;});ST[selRm].on=Object.values(s.roomLights[selRm]).some(v=>v>0);}
+ else applySG(selRm,r,s.sg);
+ if(s.sg.sh&&CR[selRm])CR[selRm].sh=s.sg.sh;
+ if(s.sg.bk&&CR[selRm])CR[selRm].bk=s.sg.bk;
+ if(s.sg.ac)AC[selRm]=s.sg.ac;
+ rpHead();rRmSC();refreshRN(selRm);buildNav();updStats();toast(r.nm,'Scene: '+s.nm);
+}
+
+function applySG(rid,r,sg){
+ if(!ST[rid])ST[rid]={on:true,sc:'s1',sch:[]};
+ if(sg.pct===0){ST[rid].on=false;r.crc.forEach((c,i)=>{if(c.p!==null)ST[rid]['c'+i]=0;});return;}
+ ST[rid].on=true;
+ r.crc.forEach((c,i)=>{
+  if(c.p===null)return;
+  if(sg.pct!=null){ST[rid]['c'+i]=sg.pct;return;}
+  if(sg.cove!==undefined&&['co','le','jo','mi','va','un','st'].includes(c.t))ST[rid]['c'+i]=sg.cove;
+  if(sg.spot!==undefined&&['sp','ch','tr'].includes(c.t))ST[rid]['c'+i]=sg.spot;
+  if(sg.pend!==undefined&&['pe','fl'].includes(c.t))ST[rid]['c'+i]=sg.pend;
+ });
+}
+
+// ── Room auto tab ──
+function rRmAU(){
+ if(!ST[selRm])ST[selRm]={on:true,sc:'s1',sch:[]};
+ const sch=ST[selRm].sch||[];
+ let h=`<div class="rp-sec">Schedules</div>
+ ${sch.map((s,i)=>`<div class="ar">
+  <div class="ar-h"><span style="font-size:12px">&#9676;</span>
+   <span class="ar-ti">${s.t} — ${s.sc}</span>
+   <button class="sht ${s.on?'on':'off'}" onclick="tgRS(${i})"></button>
+   <button class="ad" onclick="rmRS(${i})">&#215;</button>
+  </div>
+  <div class="af"><span class="al">Time</span><input class="ai" type="time" value="${s.t}" onchange="ST['${selRm}'].sch[${i}].t=this.value;rRmAU()"></div>
+  <div class="af"><span class="al">Scene</span><select class="as" onchange="ST['${selRm}'].sch[${i}].sc=this.value">
+   ${allSC().map(sc=>`<option ${sc.nm===s.sc?'selected':''}>${sc.nm}</option>`).join('')}
+  </select></div>
+  <div class="af"><span class="al">Days</span><div class="adays">${DAYS.map(d=>`<div class="aday ${s.d.includes(d)?'on':''}" onclick="tgRD(${i},'${d}')">${d}</div>`).join('')}</div></div>
+ </div>`).join('')}
+ <div class="add-row" onclick="addRS()">+ Add schedule</div>`;
+ document.getElementById('rpBody').innerHTML=h;
+}
+function addRS(){if(!ST[selRm])ST[selRm]={on:true,sc:'s1',sch:[]};ST[selRm].sch.push({t:'08:00',sc:SC[0].nm,d:['Mo','Tu','We','Th','Fr'],on:true});rRmAU();}
+function rmRS(i){ST[selRm].sch.splice(i,1);rRmAU();}
+function tgRS(i){ST[selRm].sch[i].on=!ST[selRm].sch[i].on;rRmAU();}
+function tgRD(si,d){const ds=ST[selRm].sch[si].d;const idx=ds.indexOf(d);if(idx>-1)ds.splice(idx,1);else ds.push(d);rRmAU();}
+
+// ── Global scene apply ──
+function applyG(k){
+ actSc=k;
+ const s=allSC().find(x=>x.k===k);if(!s)return;
+ allR().forEach(r=>{
+  if(!ST[r.id])ST[r.id]={on:true,sc:'s1',sch:[]};
+  ST[r.id].sc=k;
+  if(s.roomLights&&s.roomLights[r.id]){Object.entries(s.roomLights[r.id]).forEach(([i,p])=>{ST[r.id]['c'+i]=p;});ST[r.id].on=Object.values(s.roomLights[r.id]).some(v=>v>0);}
+  else applySG(r.id,r,s.sg);
+  if(s.sg.sh){if(!CR[r.id])CR[r.id]={sh:'open',bk:'open'};CR[r.id].sh=s.sg.sh;}
+  if(s.sg.bk){if(!CR[r.id])CR[r.id]={sh:'open',bk:'open'};CR[r.id].bk=s.sg.bk;}
+  if(s.sg.ac)AC[r.id]=s.sg.ac;
+ });
+ buildFP();buildNav();updStats();
+ if(curV==='sc')renderGSC();
+ if(selRm){rpHead();rpBody();}
+ toast('Scene applied',s.nm+' — all rooms');
+}
+function flOn(){Object.values(F[curFl]?.rooms||[]).forEach(r=>{if(!ST[r.id])ST[r.id]={on:true,sc:'s1',sch:[]};ST[r.id].on=true;});buildFP();buildNav();updStats();}
+function flOff(){Object.values(F[curFl]?.rooms||[]).forEach(r=>{if(!ST[r.id])ST[r.id]={on:true,sc:'s1',sch:[]};ST[r.id].on=false;});buildFP();buildNav();updStats();if(selRm&&flOf(selRm)===curFl)rpHead();}
+
+// ── Global scenes view ──
+function renderGSC(){
+ document.getElementById('gsGrid').innerHTML=
+  allSC().map(s=>`<div class="gs-tile ${actSc===s.k?'asc':''} ${s.custom?'cst':''}" onclick="applyG('${s.k}')">
+   <div class="gs-acts">
+    <button class="ga" onclick="event.stopPropagation();oPsEdit('${s.k}')">&#9998;</button>
+    ${s.custom?`<button class="ga del" onclick="event.stopPropagation();delCSC('${s.k}')">&#215;</button>`:''}
+   </div>
+   <div class="gs-ic">${s.ic}</div>
+   <div class="gs-nm">${s.nm}</div>
+   <div class="gs-lb">${s.lb}</div>
+  </div>`).join('')+
+  `<div class="add-tile" onclick="oSB(null)">&#10022;<div>Build scene</div></div>`;
+}
+function delCSC(k){CSC=CSC.filter(s=>s.k!==k);if(actSc===k)actSc='s1';if(curV==='sc')renderGSC();if(selRm&&rpTab==='sc')rRmSC();updStats();}
+
+// ── Global schedules ──
+let GSC=[
+ {t:'06:30',sc:'Morning',d:['Mo','Tu','We','Th','Fr'],on:true},
+ {t:'08:00',sc:'Scene 1',d:['Mo','Tu','We','Th','Fr','Sa','Su'],on:true},
+ {t:'19:00',sc:'Evening',d:['Mo','Tu','We','Th','Fr','Sa','Su'],on:true},
+ {t:'22:30',sc:'Sleep',  d:['Mo','Tu','We','Th','Fr','Sa','Su'],on:true},
+];
+function renderGSH(){
+ document.getElementById('gSchList').innerHTML=GSC.map((s,i)=>`<div class="ar">
+  <div class="ar-h"><span>&#9676;</span><span class="ar-ti">${s.t} — ${s.sc}</span>
+   <button class="sht ${s.on?'on':'off'}" onclick="GSC[${i}].on=!GSC[${i}].on;renderGSH()"></button>
+   <button class="ad" onclick="GSC.splice(${i},1);renderGSH()">&#215;</button>
+  </div>
+  <div class="af"><span class="al">Time</span><input class="ai" type="time" value="${s.t}" onchange="GSC[${i}].t=this.value"></div>
+  <div class="af"><span class="al">Scene</span><select class="as" onchange="GSC[${i}].sc=this.value">
+   ${allSC().map(sc=>`<option ${sc.nm===s.sc?'selected':''}>${sc.nm}</option>`).join('')}
+  </select></div>
+  <div class="af"><span class="al">Days</span><div class="adays">${DAYS.map(d=>`<div class="aday ${s.d.includes(d)?'on':''}" onclick="tgGD(${i},'${d}')">${d}</div>`).join('')}</div></div>
+ </div>`).join('');
+}
+function addGSch(){GSC.push({t:'09:00',sc:SC[0].nm,d:['Mo','Tu','We','Th','Fr'],on:true});renderGSH();}
+function tgGD(si,d){const ds=GSC[si].d;const idx=ds.indexOf(d);if(idx>-1)ds.splice(idx,1);else ds.push(d);renderGSH();}
+
+// ── Modal helpers ──
+function oM(id){document.getElementById(id).classList.add('open');}
+function cM(id){document.getElementById(id).classList.remove('open');}
+
+function mkIco(sel,list,onChange){
+ return list.map(ic=>`<button class="io ${sel===ic?'on':''}" onclick="(${onChange.toString()})(this,'${ic.replace(/'/g,"\'")}');document.querySelectorAll(this.parentNode.querySelectorAll('.io')).forEach(b=>b.classList.remove('on'));this.classList.add('on')">${ic}</button>`).join('');
+}
+// Simpler icon picker without template literal issues
+function mkIcons(containerId,sel,list,cb){
+ const c=document.getElementById(containerId);if(!c)return;
+ c.innerHTML='';
+ list.forEach(ic=>{
+  const b=document.createElement('button');
+  b.className='io'+(sel===ic?' on':'');
+  b.innerHTML=ic;
+  b.onclick=()=>{c.querySelectorAll('.io').forEach(x=>x.classList.remove('on'));b.classList.add('on');cb(ic);};
+  c.appendChild(b);
+ });
+}
+
+// ── Project edit ──
+function openPjEdit(){
+ ['pm0','pm1','pm2','pm3','pm4','pm5','pm6'].forEach((id,i)=>{const el=document.getElementById(id);if(el)el.value=[pj.nm,pj.cl,pj.un,pj.dc,pj.lo,pj.ct,pj.nt][i];});
+ oM('pjMo');
+}
+document.getElementById('pjNm').onclick=openPjEdit;
+document.querySelector('.rail-logo').onclick=openPjEdit;
+function savePj(){
+ const vals=['pm0','pm1','pm2','pm3','pm4','pm5','pm6'].map(id=>document.getElementById(id)?.value.trim()||'');
+ pj={nm:vals[0]||pj.nm,cl:vals[1],un:vals[2],dc:vals[3],lo:vals[4],ct:vals[5],nt:vals[6]};
+ updStats();cM('pjMo');toast('Project updated',pj.nm+' · '+pj.cl);
+}
+
+// ── Floor edit ──
+function oFlEdit(fk){
+ editFl=fk;const fd=F[fk];
+ document.getElementById('fl0').value=fd.lb;
+ iFL=fd.ic;
+ mkIcons('flIps',iFL,FI,ic=>{iFL=ic;});
+ oM('flMo');
+}
+function saveFloor(){
+ if(!editFl)return;
+ F[editFl].lb=document.getElementById('fl0').value.trim()||F[editFl].lb;
+ F[editFl].ic=iFL;
+ buildTabs();buildNav();cM('flMo');toast('Floor updated',F[editFl].lb);
+}
+function delFloor(){
+ if(Object.keys(F).length<=1){toast('Cannot delete','Need at least one floor');return;}
+ delete F[editFl];curFl=Object.keys(F)[0];
+ buildTabs();buildNav();swFl(curFl);cM('flMo');toast('Floor deleted','');
+}
+function addFloor(){
+ const id='fl_'+Date.now();
+ F[id]={lb:'New floor',ic:'&#127968;',cW:810,cH:400,rooms:[]};
+ buildTabs();buildNav();swFl(id);oFlEdit(id);
+}
+
+// ── Room edit ──
+function oRmEdit(rid){
+ editRm=rid;const r=getR(rid);
+ iRM=r.ic;
+ document.getElementById('rmMoT').textContent='Edit: '+r.nm;
+ renderRmModal(r);oM('rmMo');
+}
+function renderRmModal(r){
+ const tOpts=Object.entries(LT).map(([k,v])=>`<option value="${k}">${v.lb}</option>`).join('');
+ const tgOpts=['','MS','KP','TD','LED','Manual'].map(t=>`<option value="${t}">${t||'None'}</option>`).join('');
+ const body=document.getElementById('rmMoB');
+ body.innerHTML=`
+  <div class="fi-row">
+   <div class="fi"><label>Room name</label><input id="rm_nm" value="${r.nm}"></div>
+   <div class="fi"><label>Icon</label><div class="ip" id="rm_ips"></div></div>
+  </div>
+  <div class="fi"><label>Circuits</label>
+   <div id="rm_crcs">${r.crc.map((c,i)=>`<div class="cr-row" id="crc_${i}">
+    <span style="font-size:14px;flex-shrink:0">${lt(c.t).em}</span>
+    <input type="text" value="${c.n}" id="crn_${i}" style="flex:1;min-width:60px" placeholder="Circuit name">
+    <select id="crt_${i}" style="width:110px" onchange="updCrIco(${i})"><option value="">Type…</option>${tOpts}</select>
+    <input type="number" id="crp_${i}" value="${c.p!=null?c.p:''}" placeholder="%" min="0" max="100" step="5" style="width:46px;text-align:center" title="Brightness">
+    <select id="crg_${i}" style="width:65px">${tgOpts}</select>
+    <button onclick="rmCrc(${i})" style="color:var(--t3);border:none;background:none;cursor:pointer;font-size:13px">&#215;</button>
+   </div>`).join('')}</div>
+   <div class="add-row" style="margin-top:6px" onclick="addCrc()">+ Add circuit</div>
+  </div>`;
+ mkIcons('rm_ips',iRM,RI,ic=>{iRM=ic;});
+ r.crc.forEach((c,i)=>{const s=document.getElementById('crt_'+i);if(s)s.value=c.t;const g=document.getElementById('crg_'+i);if(g)g.value=c.tg||'';});
+}
+function updCrIco(i){
+ const t=document.getElementById('crt_'+i)?.value;
+ const sp=document.querySelector(`#crc_${i} span`);
+ if(sp&&t)sp.innerHTML=lt(t).em;
+}
+function saveCrcVals(r){
+ r.crc.forEach((c,i)=>{
+  const nm=document.getElementById('crn_'+i);const tp=document.getElementById('crt_'+i);
+  const pv=document.getElementById('crp_'+i);const tg=document.getElementById('crg_'+i);
+  if(nm)c.n=nm.value;if(tp&&tp.value)c.t=tp.value;
+  if(pv)c.p=pv.value!==''?parseInt(pv.value):null;if(tg)c.tg=tg.value;
+ });
+}
+function addCrc(){
+ const r=getR(editRm);saveCrcVals(r);
+ r.crc.push({n:'New Light',t:'sp',p:50,tg:''});
+ if(!ST[editRm])ST[editRm]={on:true,sc:'s1',sch:[]};
+ ST[editRm]['c'+(r.crc.length-1)]=50;
+ renderRmModal(r);
+}
+function rmCrc(idx){
+ const r=getR(editRm);saveCrcVals(r);r.crc.splice(idx,1);
+ const ns={on:ST[editRm]?.on,sc:ST[editRm]?.sc||'s1',sch:ST[editRm]?.sch||[]};
+ r.crc.forEach((c,i)=>{ns['c'+i]=c.p;});ST[editRm]=ns;
+ renderRmModal(r);
+}
+function saveRoom(){
+ const r=getR(editRm);if(!r)return;
+ r.nm=document.getElementById('rm_nm')?.value.trim()||r.nm;r.ic=iRM;
+ saveCrcVals(r);
+ if(!ST[editRm])ST[editRm]={on:true,sc:'s1',sch:[]};
+ r.crc.forEach((c,i)=>{if(ST[editRm]['c'+i]===undefined)ST[editRm]['c'+i]=c.p;});
+ cM('rmMo');buildNav();buildFP();rpHead();rpBody();toast('Room updated',r.nm);
+}
+function delRoom(){
+ const fl=Object.entries(F).find(([,f])=>f.rooms.find(r=>r.id===editRm));if(!fl)return;
+ fl[1].rooms=fl[1].rooms.filter(r=>r.id!==editRm);
+ if(selRm===editRm)selRm=null;
+ cM('rmMo');buildNav();buildFP();rpDef();updStats();toast('Room deleted','');
+}
+function addRoom(fk){
+ const fd=F[fk];if(!fd)return;
+ const id='rm_'+Date.now();
+ // Auto-position
+ let maxY=0;fd.rooms.forEach(r=>{if(r.y+r.h>maxY)maxY=r.y+r.h;});
+ fd.rooms.push({id,nm:'New Room',ic:'&#127968;',x:10,y:maxY+10,w:140,h:100,crc:[{n:'Spot Lights',t:'sp',p:50,tg:''}]});
+ ST[id]={on:true,sc:'s1',sch:[],'c0':50};AC[id]=24;CR[id]={sh:'open',bk:'open'};
+ buildNav();buildFP();oRmEdit(id);
+}
+
+// ── Preset scene edit ──
+function oPsEdit(k){
+ editPs=k;
+ const s=allSC().find(x=>x.k===k);if(!s)return;
+ document.getElementById('ps0').value=s.nm;
+ document.getElementById('ps1').value=s.lb;
+ document.getElementById('ps2').value=s.ic;
+ oM('psMo');
+}
+function savePsScene(){
+ const s=allSC().find(x=>x.k===editPs);if(!s)return;
+ s.nm=document.getElementById('ps0').value.trim()||s.nm;
+ s.lb=document.getElementById('ps1').value.trim()||s.lb;
+ const ico=document.getElementById('ps2').value.trim();
+ if(ico)s.ic=ico;
+ cM('psMo');if(curV==='sc')renderGSC();if(selRm&&rpTab==='sc')rRmSC();toast('Scene updated',s.nm);
+}
+
+// ── Scene builder ──
+function oSB(editKey){
+ editSc=editKey||null;
+ _sb={nm:'',ic:'&#10022;',sh:null,bk:null,ac:false,acT:24,lts:{}};
+ if(editKey){const s=CSC.find(x=>x.k===editKey);if(s){_sb={nm:s.nm,ic:s.ic,sh:s.sg?.sh||null,bk:s.sg?.bk||null,ac:!!s.sg?.ac,acT:s.sg?.ac||24,lts:{...s.lts}};}}
+ document.getElementById('sbMoT').textContent=editKey?'Edit custom scene':'Build custom scene';
+ renderSBMo();oM('sbMo');
+}
+function renderSBMo(){
+ const cl=Object.values(F).map(fd=>{
+  const rows=fd.rooms.map(r=>{
+   const lc=r.crc.filter(c=>c.p!==null&&!['cu','ac','he','ex'].includes(c.t));
+   if(!lc.length)return'';
+   return`<div class="lcs">
+    <div class="lch"><span>${r.ic}</span>${r.nm}<span class="lat">${fd.lb}</span></div>
+    ${lc.map(c=>{
+     const i=r.crc.indexOf(c),ck=r.id+'_'+i,on=!!_sb.lts[ck],pv=_sb.lts[ck]?.p||c.p||50;
+     const li=lt(c.t);
+     return`<div class="lcr">
+      <div class="lck ${on?'on':''}" id="lck_${ck}" onclick="tgLt('${ck}','${r.id}',${i},${c.p||50})"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20,6 9,17 4,12"/></svg></div>
+      <span style="font-size:12px">${li.em}</span>
+      <span class="lcn">${c.n} <span style="font-size:8px;color:var(--t3)">${li.lb}</span></span>
+      <div class="lcp ${on?'':'dim'}" id="lcp_${ck}">
+       <input type="number" min="0" max="100" step="5" value="${pv}" id="lpv_${ck}" oninput="_sb.lts['${ck}']&&(_sb.lts['${ck}'].p=parseInt(this.value)||0)">
+       <span>%</span>
+      </div>
+     </div>`;
+    }).join('')}
+   </div>`;
+  }).join('');
+  if(!rows.trim())return'';
+  return`<div style="font-size:9px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;padding:5px 0 3px;margin-top:3px;border-bottom:1px solid var(--b1)">${fd.ic} ${fd.lb}</div>${rows}`;
+ }).join('');
+ document.getElementById('sbMoB').innerHTML=`
+  <div class="fi-row" style="margin-bottom:9px">
+   <div class="fi"><label>Scene name</label><input id="sbnm" value="${_sb.nm}" placeholder="e.g. Pool party..." oninput="_sb.nm=this.value"></div>
+   <div class="fi"><label>Icon (emoji)</label><input id="sbic" value="${_sb.ic}" placeholder="&#10022;" oninput="_sb.ic=this.value"></div>
+  </div>
+  <div class="fi"><label>Select lights &amp; brightness</label>
+   <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px">
+    <button class="btn" style="font-size:9px" onclick="ckAllSB(true)">All</button>
+    <button class="btn" style="font-size:9px" onclick="ckAllSB(false)">None</button>
+    <button class="btn" style="font-size:9px" onclick="allLpSB(100)">100%</button>
+    <button class="btn" style="font-size:9px" onclick="allLpSB(50)">50%</button>
+    <button class="btn" style="font-size:9px" onclick="allLpSB(25)">25%</button>
+    <button class="btn" style="font-size:9px" onclick="allLpSB(0)">Off</button>
+   </div>
+   <div style="background:var(--s2);border:1px solid var(--b1);border-radius:7px;padding:9px;max-height:220px;overflow-y:auto">${cl}</div>
+  </div>
+  <div class="fi"><label>Curtains</label>
+   ${['sh','bk'].map(k=>{const lbl=k==='sh'?'Sheer':'Blackout';return`<div class="mc-row">
+    <span style="font-size:13px">&#9614;</span><span class="mc-lb">${lbl}</span>
+    <div class="mc-btns">${['open','half','close'].map(v=>`<button class="mc-b ${_sb[k]===v?'on':''}" onclick="_sb.${k}='${v}';renderSBMo()">${v.charAt(0).toUpperCase()+v.slice(1)}</button>`).join('')}
+    <button class="mc-b ${_sb[k]===null?'on':''}" onclick="_sb.${k}=null;renderSBMo()">No change</button></div>
+   </div>`;}).join('')}
+  </div>
+  <div class="fi"><label>A/C</label>
+   <div class="mc-row">
+    <span style="font-size:13px">&#10052;</span><span class="mc-lb">Temperature</span>
+    <label style="font-size:9px;cursor:pointer;display:flex;align-items:center;gap:3px;color:var(--t2)"><input type="checkbox" id="sbac" ${_sb.ac?'checked':''} onchange="_sb.ac=this.checked;renderSBMo()">Enable</label>
+    ${_sb.ac?`<div style="display:flex;align-items:center;gap:4px">
+     <button class="step" onclick="_sb.acT=Math.max(16,Math.round((_sb.acT-.5)*2)/2);document.getElementById('sb_acv').textContent=_sb.acT.toFixed(1)+'°C'">&#8722;</button>
+     <span class="mc-tv" id="sb_acv">${_sb.acT.toFixed(1)}°C</span>
+     <button class="step" onclick="_sb.acT=Math.min(30,Math.round((_sb.acT+.5)*2)/2);document.getElementById('sb_acv').textContent=_sb.acT.toFixed(1)+'°C'">+</button>
+    </div>`:'<span style="font-size:9px;color:var(--t3)">Enable to set</span>'}
+   </div>
+  </div>`;
+}
+function tgLt(ck,rid,idx,def){
+ if(_sb.lts[ck])delete _sb.lts[ck];else _sb.lts[ck]={rid,idx,p:def||50};
+ const el=document.getElementById('lck_'+ck);if(el)el.classList.toggle('on',!!_sb.lts[ck]);
+ const pw=document.getElementById('lcp_'+ck);if(pw)pw.classList.toggle('dim',!_sb.lts[ck]);
+}
+function ckAllSB(on){
+ allR().forEach(r=>r.crc.forEach((c,i)=>{
+  if(['cu','ac','he','ex'].includes(c.t)||c.p===null)return;
+  const ck=r.id+'_'+i;
+  if(on)_sb.lts[ck]={rid:r.id,idx:i,p:c.p||50};else delete _sb.lts[ck];
+ }));
+ renderSBMo();
+}
+function allLpSB(pct){Object.keys(_sb.lts).forEach(ck=>{_sb.lts[ck].p=pct;});document.querySelectorAll('.lcp input').forEach(i=>i.value=pct);}
+function saveSB(){
+ const nm=(document.getElementById('sbnm')?.value||_sb.nm||'').trim();
+ if(!nm){toast('Error','Enter a scene name');return;}
+ _sb.ic=document.getElementById('sbic')?.value||_sb.ic||'&#10022;';
+ const roomLights={};
+ Object.values(_sb.lts).forEach(({rid,idx,p})=>{if(!roomLights[rid])roomLights[rid]={};roomLights[rid][idx]=p;});
+ const cnt=Object.keys(_sb.lts).length;
+ const lb=cnt+' light'+(cnt!==1?'s':'')+((_sb.sh)?' | Sheer '+_sb.sh:'')+((_sb.bk)?' | Blackout '+_sb.bk:'')+((_sb.ac)?' | A/C '+_sb.acT.toFixed(1)+'°C':'');
+ const scObj={k:'c_'+Date.now(),nm,lb,ic:_sb.ic,custom:true,lts:{..._sb.lts},roomLights,sg:{pct:null,sh:_sb.sh,bk:_sb.bk,ac:_sb.ac?_sb.acT:null}};
+ if(editSc){const s=CSC.find(x=>x.k===editSc);if(s)Object.assign(s,{nm,lb,ic:_sb.ic,lts:{..._sb.lts},roomLights,sg:scObj.sg});}
+ else CSC.push(scObj);
+ cM('sbMo');updStats();if(curV==='sc')renderGSC();if(selRm&&rpTab==='sc')rRmSC();
+ toast(editSc?'Scene updated':'Scene saved',nm);
+}
+
+// ── AI Import ──
+let _files=[],_parsed=null;
+function openImport(){document.getElementById('impPanel').classList.add('open');resetImport();}
+function closeImport(){document.getElementById('impPanel').classList.remove('open');}
+function resetImport(){_files=[];_parsed=null;document.getElementById('flList').innerHTML='';document.getElementById('pp').classList.remove('show');document.getElementById('pr').classList.remove('show');document.getElementById('parsBtn').disabled=true;document.getElementById('parsBtn').style.opacity='.45';document.getElementById('impBtn').style.display='none';}
+const dz2=document.getElementById('dz');
+dz2.addEventListener('dragover',e=>{e.preventDefault();dz2.classList.add('over');});
+dz2.addEventListener('dragleave',()=>dz2.classList.remove('over'));
+dz2.addEventListener('drop',e=>{e.preventDefault();dz2.classList.remove('over');handleFiles(e.dataTransfer.files);});
+function handleFiles(files){
+ [...files].forEach(f=>{if(!_files.find(u=>u.name===f.name)){_files.push(f);addFLI(f);}});
+ document.getElementById('parsBtn').disabled=!_files.length;
+ document.getElementById('parsBtn').style.opacity=_files.length?'1':'.45';
+}
+function addFLI(f){
+ const sz=f.size>1048576?(f.size/1048576).toFixed(1)+'MB':(f.size/1024).toFixed(0)+'KB';
+ const ext=f.name.split('.').pop().toLowerCase();
+ const ico={'pdf':'&#128196;','png':'&#128247;','jpg':'&#128247;','jpeg':'&#128247;','xlsx':'&#128202;','csv':'&#128202;'}[ext]||'&#128196;';
+ const d=document.createElement('div');d.className='fli';d.id='fli_'+encodeURIComponent(f.name);
+ d.innerHTML=`<span style="font-size:18px">${ico}</span>
+  <div style="flex:1;min-width:0"><div class="fli-nm">${f.name}</div><div class="fli-sz">${sz}</div></div>
+  <span class="fli-st st-rd" id="fst_${encodeURIComponent(f.name)}">Ready</span>
+  <button class="fli-del" onclick="rmFLI('${f.name}')">&#215;</button>`;
+ document.getElementById('flList').appendChild(d);
+}
+function rmFLI(nm){_files=_files.filter(f=>f.name!==nm);const el=document.getElementById('fli_'+encodeURIComponent(nm));if(el)el.remove();document.getElementById('parsBtn').disabled=!_files.length;document.getElementById('parsBtn').style.opacity=_files.length?'1':'.45';}
+function setSt(nm,cls,tx){const el=document.getElementById('fst_'+encodeURIComponent(nm));if(el){el.className='fli-st '+cls;el.textContent=tx;}}
+function setP(pct,lb,st){
+ document.getElementById('pp').classList.add('show');
+ document.getElementById('ppF').style.width=pct+'%';
+ document.getElementById('ppLb').textContent=lb;
+ document.getElementById('ppSt').textContent=st;
+}
+function f2b64(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(',')[1]);r.onerror=()=>rej(new Error('Read failed'));r.readAsDataURL(file);});}
+
+async function startParse(){
+ if(!_files.length)return;
+ document.getElementById('parsBtn').disabled=true;
+ document.getElementById('pr').classList.remove('show');
+ _parsed=null;
+ setP(5,'Reading files…','Preparing for AI analysis');
+ const mc=[];
+ for(let i=0;i<_files.length;i++){
+  const f=_files[i];
+  setSt(f.name,'st-ps','Parsing…');
+  setP(5+i/_files.length*40,'Processing '+f.name+'…','File '+(i+1)+' of '+_files.length);
+  const ext=f.name.split('.').pop().toLowerCase();
+  try{
+   if(['png','jpg','jpeg','webp'].includes(ext)){
+    const b64=await f2b64(f);
+    mc.push({type:'image',source:{type:'base64',media_type:'image/'+ext,data:b64}});
+    mc.push({type:'text',text:'[Image: '+f.name+']'});
+   }else if(ext==='pdf'){
+    const b64=await f2b64(f);
+    mc.push({type:'document',source:{type:'base64',media_type:'application/pdf',data:b64}});
+    mc.push({type:'text',text:'[PDF: '+f.name+']'});
+   }else{
+    const tx=await f.text();
+    mc.push({type:'text',text:'[File: '+f.name+'\n'+tx.slice(0,6000)});
+   }
+   setSt(f.name,'st-dn','Loaded');
+  }catch(e){setSt(f.name,'st-er','Error');}
+ }
+ setP(50,'Sending to AI…','Claude is reading the drawings');
+ const sys=`You are a K4 smart home expert. Analyse the uploaded drawings/files and extract ALL room names, lighting circuits and project info.
+Return ONLY valid JSON (no markdown, no backticks):
+{"project":{"nm":"Villa name","cl":"Cluster","un":"Unit","lo":"Location","dc":"Drawing ref","ct":"Client"},"floors":[{"id":"gf","lb":"Ground floor","ic":"&#127968;","rooms":[{"id":"uid","nm":"Room name","ic":"&#127968;","crc":[{"n":"Spot Lights L3","t":"sp","p":50,"tg":""},{"n":"Cove LED L3A","t":"co","p":30,"tg":""},{"n":"Curtains Sheer","t":"cu","p":null,"tg":"TD"},{"n":"A/C","t":"ac","p":null,"tg":""}]}]}],"scenes":[{"k":"s1","nm":"Scene 1","lb":"All ON","ic":"&#128161;","sg":{"pct":100}}]}
+Type codes: sp=spot,co=cove LED,le=LED strip,pe=pendant,tr=track,wa=wall,ch=chandelier,un=under cabinet,jo=joinery LED,fl=floor lamp,mi=mirror LED,va=vanity LED,ou=outdoor,bo=bollard,up=uplighter,po=pool,cu=curtain,ac=AC,he=heated floor,ex=exhaust
+Be exhaustive — extract every single room and circuit visible.`;
+ mc.push({type:'text',text:'Extract the complete lighting configuration from these files. Return only JSON.'});
+ try{
+  const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:4000,system:sys,messages:[{role:'user',content:mc}]})});
+  setP(85,'Processing response…','Extracting room data');
+  const data=await resp.json();
+  let raw=(data.content?.find(b=>b.type==='text')?.text||'').trim();
+  if(raw.startsWith('```')){raw=raw.replace(/^```[a-z]*/,'').replace(/```\s*$/,'').trim();}
+  setP(95,'Parsing data…','Building rooms');
+  _parsed=JSON.parse(raw);
+  setP(100,'Complete!','Data extracted successfully');
+  showPR(_parsed);
+  _files.forEach(f=>setSt(f.name,'st-dn','Done'));
+  document.getElementById('impBtn').style.display='';
+  const tot=(_parsed.floors||[]).reduce((a,f)=>a+(f.rooms?.length||0),0);
+  document.getElementById('impHint').textContent='✓ '+(_parsed.floors?.length||0)+' floors, '+tot+' rooms extracted';
+ }catch(e){
+  setP(100,'Error',''+e.message);
+  document.getElementById('ppF').style.background='var(--rd)';
+  _files.forEach(f=>setSt(f.name,'st-er','Failed'));
+  toast('Parse failed',e.message);
+ }
+ document.getElementById('parsBtn').disabled=false;
+}
+function showPR(d){
+ const pr=document.getElementById('pr');pr.classList.add('show');
+ // Project
+ const pjEl=document.getElementById('prPj');
+ pjEl.innerHTML=Object.entries(d.project||{}).filter(([,v])=>v).map(([k,v])=>`<div class="pr-chip">${k}: ${v}</div>`).join('');
+ // Rooms with checkboxes
+ const allRms=(d.floors||[]).flatMap(f=>(f.rooms||[]).map(r=>({...r,fLb:f.lb})));
+ document.getElementById('prRms').innerHTML=allRms.map(r=>`<div class="pr-chip"><input type="checkbox" id="chk_${r.id}" checked><span>${r.ic||'&#127968;'}</span>${r.nm} <span style="color:var(--t3);font-size:8px">${r.crc?.length||0}cts</span></div>`).join('');
+ // Scenes
+ document.getElementById('prScs').innerHTML=(d.scenes||[]).map(s=>`<div class="pr-sc">${s.ic||'&#10022;'} ${s.nm}</div>`).join('');
+ // Raw
+ document.getElementById('prRaw').textContent=JSON.stringify(d,null,2).slice(0,1500)+'…';
+}
+function importData(){
+ if(!_parsed)return;
+ const skip=new Set([...document.querySelectorAll('#prRms input:not(:checked)')].map(cb=>cb.id.replace('chk_','')));
+ // Project
+ if(_parsed.project){const pjd=_parsed.project;if(pjd.nm)pj.nm=pjd.nm;if(pjd.cl)pj.cl=pjd.cl;if(pjd.lo)pj.lo=pjd.lo;if(pjd.dc)pj.dc=pjd.dc;if(pjd.ct)pj.ct=pjd.ct;}
+ // Floors
+ if(_parsed.floors?.length){
+  const nF={};
+  _parsed.floors.forEach(fd=>{
+   const rooms=(fd.rooms||[]).filter(r=>!skip.has(r.id));
+   // Auto-layout rooms
+   let x=10,y=10,mH=0,cW=810;
+   rooms.forEach(r=>{
+    const h=Math.max(80,60+r.crc.length*12);const w=Math.min(200,Math.max(120,80+r.nm.length*5));
+    if(x+w>cW-10){x=10;y+=mH+10;mH=0;}
+    r.x=x;r.y=y;r.w=w;r.h=h;x+=w+10;mH=Math.max(mH,h);
+    if(!ST[r.id])ST[r.id]={on:true,sc:'s1',sch:[]};
+    r.crc.forEach((c,i)=>{if(ST[r.id]['c'+i]===undefined)ST[r.id]['c'+i]=c.p;});
+    if(!AC[r.id])AC[r.id]=24;
+    if(!CR[r.id])CR[r.id]={sh:'open',bk:'open'};
+    if(!r.ic)r.ic='&#127968;';
+   });
+   nF[fd.id]={lb:fd.lb||'Floor',ic:fd.ic||'&#127968;',cW:cW,cH:Math.max(400,y+180),rooms};
+  });
+  Object.assign(F,nF);
+ }
+ // Scenes
+ if(_parsed.scenes?.length){_parsed.scenes.forEach(s=>{const e=SC.find(x=>x.k===s.k);if(e){e.nm=s.nm;e.lb=s.lb;if(s.ic)e.ic=s.ic;}else SC.push({...s,sg:s.sg||{pct:50}});});}
+ closeImport();
+ curFl=Object.keys(F)[0];
+ buildTabs();buildFP();buildNav();updStats();
+ const tot=Object.values(F).reduce((a,f)=>a+(f.rooms?.length||0),0);
+ toast('Import complete',tot+' rooms loaded');
+}
+
+// ── Export ──
+function exportHTML(){
+ // Export current state as standalone HTML (self-contained copy)
+ const a=document.createElement('a');
+ const blob=new Blob([document.documentElement.outerHTML],{type:'text/html'});
+ a.href=URL.createObjectURL(blob);
+ a.download='K4_'+pj.nm.replace(/\s+/g,'_')+'_'+new Date().toISOString().slice(0,10)+'.html';
+ a.click();
+ toast('Exported','File saved to downloads');
+}
+
+// ── Toast ──
+let _tT;
+function toast(ti,bd){
+ document.getElementById('toTi').textContent=ti;
+ document.getElementById('toBd').textContent=bd;
+ const t=document.getElementById('toast');t.classList.add('show');
+ clearTimeout(_tT);_tT=setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+// ── Init ──
+initSt();buildTabs();buildFP();buildNav();updStats();
+</script>
+
+</body></html>
